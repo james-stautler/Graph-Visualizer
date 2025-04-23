@@ -17,7 +17,7 @@ private:
     sf::RenderWindow window;
 
 public:
-    Window(const int width, const int height, const std::string &title, const int framerateLimit);
+    Window(int width, int height, const std::string &title, int framerateLimit);
 
     sf::RenderWindow& getWindow();
 };

@@ -9,22 +9,26 @@ private:
     int id;
     float x;
     float y;
+    float radius;
     float value;
     sf::Color color;
 
 public:
-    Node(const int id, const float x, const float y, const float value, const sf::Color color);
+    Node() = default;
+    Node(int id, float x, float y, float radius, float value, sf::Color color);
 
     [[nodiscard]] int getId() const;
     [[nodiscard]] float getX() const;
     [[nodiscard]] float getY() const;
+    [[nodiscard]] float getRadius() const;
     [[nodiscard]] float getValue() const;
     [[nodiscard]] sf::Color getColor() const;
 
-    void setX(const float x);
-    void setY(const float y);
-    void setValue(const float value);
-    void setColor(const sf::Color color);
+    void setX(float x);
+    void setY(float y);
+    void setRadius(float radius);
+    void setValue(float value);
+    void setColor(sf::Color color);
 
 };
 

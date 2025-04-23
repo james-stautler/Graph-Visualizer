@@ -9,17 +9,18 @@ int main()
 
     auto win = Window(WIDTH, HEIGHT, TITLE, FRAMERATE_LIMIT);
 
-    while (win.getWindow().isOpen())
-    {
-        while (const std::optional event = win.getWindow().pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-            {
+    while (win.getWindow().isOpen()) {
+        while (const std::optional event = win.getWindow().pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 win.getWindow().close();
+            }
+
+            if (event->is<sf::Event::MouseButtonPressed>()) {
+                sf::Vector2i pos = sf::Mouse::getPosition(win.getWindow());
             }
         }
 
-        win.getWindow().clear();
+        win.getWindow().clear(sf::Color::Red);
         win.getWindow().display();
     }
 }
