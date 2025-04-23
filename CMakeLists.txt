@@ -18,6 +18,8 @@ add_executable(gv src/gv.cpp
         src/Window.h
         src/Window.cpp
         src/Edge.h
-        src/Edge.cpp)
+        src/Edge.cpp
+        src/Graph.h
+        src/Graph.cpp)
 target_compile_features(gv PRIVATE cxx_std_17)
 target_link_libraries(gv PRIVATE SFML::Graphics)

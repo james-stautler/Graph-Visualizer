@@ -1,11 +1,12 @@
 
 #include "Node.h"
 
-Node::Node(const int id, const float x, const float y, const float radius, const float value, const sf::Color color) {
+Node::Node(int id, int x, int y, int radius, int padding, float value, sf::Color color) {
     this->id = id;
     this->x = x;
     this->y = y;
     this->radius = radius;
+    this->padding = padding;
     this->value = value;
     this->color = color;
 }
@@ -14,15 +15,15 @@ int Node::getId() const {
     return this->id;
 }
 
-float Node::getX() const {
+int Node::getX() const {
     return this->x;
 }
 
-float Node::getY() const {
+int Node::getY() const {
     return this->y;
 }
 
-float Node::getRadius() const {
+int Node::getRadius() const {
     return this->radius;
 }
 
@@ -34,15 +35,23 @@ sf::Color Node::getColor() const {
     return this->color;
 }
 
-void Node::setX(float x) {
+bool Node::withinBounds(int x, int y) const {
+    return ((x >= this->x - this->radius - padding) &&
+            (y >= this->y - this->radius - padding) &&
+            (x <= this->x + this->radius + padding) &&
+            (y <= this->y + this->radius + padding));
+}
+
+
+void Node::setX(int x) {
     this->x = x;
 }
 
-void Node::setY(float y) {
+void Node::setY(int y) {
     this->y = y;
 }
 
-void Node::setRadius(float radius) {
+void Node::setRadius(int radius) {
     this->radius = radius;
 }
 

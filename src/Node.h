@@ -7,26 +7,29 @@
 class Node {
 private:
     int id;
-    float x;
-    float y;
-    float radius;
+    int x;
+    int y;
+    int radius;
+    int padding;
     float value;
     sf::Color color;
 
 public:
     Node() = default;
-    Node(int id, float x, float y, float radius, float value, sf::Color color);
+    Node(int id, int x, int y, int radius, int padding, float value, sf::Color color);
 
     [[nodiscard]] int getId() const;
-    [[nodiscard]] float getX() const;
-    [[nodiscard]] float getY() const;
-    [[nodiscard]] float getRadius() const;
+    [[nodiscard]] int getX() const;
+    [[nodiscard]] int getY() const;
+    [[nodiscard]] int getRadius() const;
     [[nodiscard]] float getValue() const;
     [[nodiscard]] sf::Color getColor() const;
 
-    void setX(float x);
-    void setY(float y);
-    void setRadius(float radius);
+    bool withinBounds(int x, int y) const;
+
+    void setX(int x);
+    void setY(int y);
+    void setRadius(int radius);
     void setValue(float value);
     void setColor(sf::Color color);
 
