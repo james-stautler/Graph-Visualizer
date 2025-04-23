@@ -1,26 +1,26 @@
 
 #include "Edge.h"
 
-Edge::Edge(const Node& src, const Node& dst, const bool bidirectional) {
-    this->src = src;
-    this->dst = dst;
+Edge::Edge(int srcId, int dstId, const bool bidirectional) {
+    this->srcId = srcId;
+    this->dstId = dstId;
     this->weight = 1;
     this->bidirectional = bidirectional;
 }
 
-Edge::Edge(const Node &src, const Node &dst, const float weight, const bool bidirectional) {
-    this->src = src;
-    this->dst = dst;
+Edge::Edge(int srcId, int dstId, const float weight, const bool bidirectional) {
+    this->srcId = srcId;
+    this->dstId = dstId;
     this->weight = weight;
     this->bidirectional = bidirectional;
 }
 
-Node& Edge::getSrc() {
-    return this->src;
+int Edge::getSrc() const {
+    return this->srcId;
 }
 
-Node& Edge::getDst() {
-    return this->dst;
+int Edge::getDst() const {
+    return this->dstId;
 }
 
 float Edge::getWeight() const {
@@ -31,12 +31,12 @@ bool Edge::isBidirectional() const {
     return this->bidirectional;
 }
 
-void Edge::setSource(const Node &src) {
-    this->src = src;
+void Edge::setSource(int srcId) {
+    this->srcId = srcId;
 }
 
-void Edge::setDestination(const Node &dst) {
-    this->dst = dst;
+void Edge::setDestination(int dstId) {
+    this->dstId = dstId;
 }
 
 void Edge::setWeight(float weight) {

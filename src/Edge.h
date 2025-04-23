@@ -7,23 +7,23 @@
 
 class Edge {
 private:
-    Node src;
-    Node dst;
+    int srcId;
+    int dstId;
     float weight;
     bool bidirectional;
 
 public:
     Edge() = default;
-    Edge(const Node& src, const Node& dst, bool bidirectional);
-    Edge(const Node& src, const Node& dst, float weight, bool bidirectional);
+    Edge(int srcId, int dstId, bool bidirectional);
+    Edge(int srcId, int dstId, float weight, bool bidirectional);
 
-    [[nodiscard]] Node& getSrc();
-    [[nodiscard]] Node& getDst();
+    [[nodiscard]] int getSrc() const;
+    [[nodiscard]] int getDst() const;
     [[nodiscard]] float getWeight() const;
     [[nodiscard]] bool isBidirectional() const;
 
-    void setSource(const Node& src);
-    void setDestination(const Node& dst);
+    void setSource(int srcId);
+    void setDestination(int dstId);
     void setWeight(float weight);
     void setBidirectional(bool bidirectional);
 };

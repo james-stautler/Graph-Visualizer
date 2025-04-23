@@ -26,6 +26,7 @@ public:
     [[nodiscard]] sf::Color getColor() const;
 
     bool withinBounds(int x, int y) const;
+    bool strictlyWithinBounds(int x, int y) const;
 
     void setX(int x);
     void setY(int y);

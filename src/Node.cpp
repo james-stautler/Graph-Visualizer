@@ -42,6 +42,13 @@ bool Node::withinBounds(int x, int y) const {
             (y <= this->y + this->radius + padding));
 }
 
+bool Node::strictlyWithinBounds(int x, int y) const {
+    return ((x >= this->x - this->radius) &&
+            (y >= this->y - this->radius) &&
+            (x <= this->x + this->radius) &&
+            (y <= this->y + this->radius));
+}
+
 
 void Node::setX(int x) {
     this->x = x;

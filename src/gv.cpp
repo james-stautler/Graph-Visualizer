@@ -10,6 +10,10 @@ int main()
     const std::string TITLE = "Graph Visualizer";
     const sf::Font font("../assets/swansea.ttf");
 
+    const sf::Color BLACK = sf::Color::Black;
+    const sf::Color GREEN = sf::Color::Green;
+    const sf::Color BLUE = sf::Color::Blue;
+
     auto win = Window(WIDTH, HEIGHT, TITLE, FRAMERATE_LIMIT, font);
 
     while (win.getWindow().isOpen()) {
@@ -22,11 +26,27 @@ int main()
             if (event->is<sf::Event::MouseButtonPressed>()) {
 
                 sf::Vector2i pos = sf::Mouse::getPosition(win.getWindow());
-                int nodeId = win.getGraph().checkWithinNodeBoundary(pos.x, pos.y);
-                if (nodeId != -1) {
-                    // TODO: Change node state
+
+                // Graph creation block
+                if (pos.x <= WIDTH * 0.8) {
+                    // Check if the clicked position is within node boundary including padding
+                    int nodeId = win.getGraph().checkWithinNodeBoundary(pos.x, pos.y);
+                    if (nodeId != -1) {
+                        // If node directly clicked
+                        if (win.getGraph().getNodeMap().at(nodeId).strictlyWithinBounds(pos.x, pos.y)) {
+                            sf::Color nodeColor = win.getGraph().getNodeMap().at(nodeId).getColor();
+                            if (nodeColor == GREEN) {
+                                win.getGraph().getNodeMap().at(nodeId).setColor(BLUE);
+                            } else {
+                                win.getGraph().getNodeMap().at(nodeId).setColor(GREEN);
+                            }
+
+                        }
+                    } else {
+                        win.addNode(Node(win.getGraph().assignNodeId(), pos.x, pos.y, NODE_RADIUS, NODE_PADDING, 1, GREEN));
+                    }
                 } else {
-                    win.addNode(Node(win.getGraph().assignNodeId(), pos.x, pos.y, NODE_RADIUS, NODE_PADDING, 1, sf::Color::Green));
+                    // TODO: Handle button functionality here
                 }
             }
         }

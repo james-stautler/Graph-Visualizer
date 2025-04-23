@@ -26,8 +26,8 @@ bool Window::addNode(const Node& node) {
 }
 
 void Window::drawGraph() {
-    for (int i = 0; i < this->graph.getNodes().size(); i++) {
-        Node node = this->graph.getNodes().at(i);
+    for (const auto& pair: this->graph.getNodeMap()) {
+        Node node = pair.second;
         sf::CircleShape circle(static_cast<float>(node.getRadius()));
         const auto pos = static_cast<sf::Vector2f>(sf::Vector2i(node.getX() - node.getRadius(), node.getY() - node.getRadius()));
         circle.setPosition(pos);
