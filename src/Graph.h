@@ -22,10 +22,11 @@ public:
      int checkWithinNodeBoundary(int x, int y) const;
      int assignNodeId();
      bool addNode(const Node& node);
-     bool removeNode(const Node& node);
-     bool removeEdge(const Node& src, const Node& dst);
-     bool addEdge(const Node& src, const Node& dst);
-     bool addEdge(const Node& src, const Node& dst, float weight);
+     bool removeNode(int nodeId);
+     bool checkIfEdgeExists(int srcId, int dstId);
+     bool addEdge(int srcId, int dstId);
+     bool addEdge(int srcId, int dstId, float weight);
+     bool removeEdge(int srcId, int dstId);
 };
 
 #endif //GRAPH_H

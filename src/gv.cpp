@@ -16,6 +16,9 @@ int main()
 
     auto win = Window(WIDTH, HEIGHT, TITLE, FRAMERATE_LIMIT, font);
 
+    int nodeId_1 = -1;
+    int nodeId_2 = -1;
+
     while (win.getWindow().isOpen()) {
 
         while (const std::optional event = win.getWindow().pollEvent()) {
@@ -37,11 +40,28 @@ int main()
                             sf::Color nodeColor = win.getGraph().getNodeMap().at(nodeId).getColor();
                             if (nodeColor == GREEN) {
                                 win.getGraph().getNodeMap().at(nodeId).setColor(BLUE);
+                                if (nodeId_1 == -1) {
+                                    nodeId_1 = nodeId;
+                                } else if (nodeId_2 == -1) {
+                                    nodeId_2 = nodeId;
+                                }
                             } else {
                                 win.getGraph().getNodeMap().at(nodeId).setColor(GREEN);
                             }
-
                         }
+
+                        if (nodeId_1 != -1 && nodeId_2 != -1) {
+                            if (win.getGraph().checkIfEdgeExists(nodeId_1, nodeId_2) || win.getGraph().checkIfEdgeExists(nodeId_2, nodeId_1)) {
+                                win.getGraph().removeEdge(nodeId_1, nodeId_2);
+                            } else {
+                                win.getGraph().addEdge(nodeId_1, nodeId_2);
+                            }
+                            win.getGraph().getNodeMap().at(nodeId_1).setColor(GREEN);
+                            win.getGraph().getNodeMap().at(nodeId_2).setColor(GREEN);
+                            nodeId_1 = -1;
+                            nodeId_2 = -1;
+                        }
+
                     } else {
                         win.addNode(Node(win.getGraph().assignNodeId(), pos.x, pos.y, NODE_RADIUS, NODE_PADDING, 1, GREEN));
                     }

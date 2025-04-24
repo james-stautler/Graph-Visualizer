@@ -34,6 +34,20 @@ void Window::drawGraph() {
         circle.setFillColor(node.getColor());
         this->window.draw(circle);
     }
+
+    for (const auto& edge: this->graph.getEdges()) {
+        sf::VertexArray line(sf::PrimitiveType::Lines, 2);
+        Node src = this->graph.getNodeMap().at(edge.getSrc());
+        Node dst = this->graph.getNodeMap().at(edge.getDst());
+
+        line[0].position = sf::Vector2f(src.getX(), src.getY());
+        line[1].position = sf::Vector2f(dst.getX(), dst.getY());
+
+        line[0].color = sf::Color::White;
+        line[1].color = sf::Color::White;
+
+        this->window.draw(line);
+    }
 }
 
 

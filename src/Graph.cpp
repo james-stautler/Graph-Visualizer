@@ -40,15 +40,65 @@ bool Graph::addNode(const Node& node) {
     return true;
 }
 
-bool Graph::removeNode(const Node& node) {
-    if (this->nodeMap.find(node.getId()) == this->nodeMap.end()) {
+bool Graph::removeNode(int nodeId) {
+    if (this->nodeMap.find(nodeId) == this->nodeMap.end()) {
         return false;
     }
-    for (const auto& pair: this->nodeMap) {
-        if (pair.second.getId() == node.getId()) {
-            this->nodeMap.erase(node.getId());
-            break;
-        }
-    }
+    this->nodeMap.erase(nodeId);
     return true;
 }
+
+bool Graph::checkIfEdgeExists(int srcId, int dstId) {
+
+    for (const auto& edge: this->edges) {
+        if (edge.getSrc() == srcId && edge.getDst() == dstId) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+bool Graph::addEdge(int srcId, int dstId) {
+
+    for (const auto& edge: this->edges) {
+        if (edge.getSrc() == srcId && edge.getDst() == dstId) {
+            return false;
+        }
+    }
+
+    Edge edge = Edge(srcId, dstId, true);
+    this->edges.push_back(edge);
+    return true;
+}
+
+bool Graph::addEdge(int srcId, int dstId, float weight) {
+
+    for (const auto& edge: this->edges) {
+        if (edge.getSrc() == srcId && edge.getDst() == dstId) {
+            return false;
+        }
+    }
+
+    Edge edge = Edge(srcId, dstId, weight, true);
+    this->edges.push_back(edge);
+    return true;
+}
+
+
+bool Graph::removeEdge(int srcId, int dstId) {
+
+    for (int i = 0; i < this->edges.size(); i++) {
+        if (this->edges[i].getSrc() == srcId && this->edges[i].getDst() == dstId) {
+            this->edges.erase(this->edges.begin() + i);
+            return true;
+        }
+
+        if (this->edges[i].getSrc() == dstId && this->edges[i].getDst() == srcId) {
+            this->edges.erase(this->edges.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
+
