@@ -25,6 +25,31 @@ bool Window::addNode(const Node& node) {
     return this->graph.addNode(node);
 }
 
+bool Window::removeNode(int nodeId) {
+    return this->graph.removeNode(nodeId);
+}
+
+
+sf::Color Window::getNodeColor(int nodeId) {
+    return this->graph.getNodeMap().at(nodeId).getColor();
+}
+
+void Window::setNodeColor(int nodeId, sf::Color color) {
+    this->graph.getNodeMap().at(nodeId).setColor(color);
+}
+
+
+void Window::edgeHandler(int srcId, int dstId) {
+    if (this->graph.checkIfEdgeExists(srcId, dstId) || this->graph.checkIfEdgeExists(dstId, srcId)) {
+        this->graph.removeEdge(srcId, dstId);
+    } else {
+        this->graph.addEdge(srcId, dstId);
+    }
+    this->setNodeColor(srcId, sf::Color::Green);
+    this->setNodeColor(dstId, sf::Color::Green);
+}
+
+
 void Window::drawGraph() {
     for (const auto& pair: this->graph.getNodeMap()) {
         Node node = pair.second;

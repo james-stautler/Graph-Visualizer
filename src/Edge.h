@@ -16,6 +16,7 @@ public:
     Edge() = default;
     Edge(int srcId, int dstId, bool bidirectional);
     Edge(int srcId, int dstId, float weight, bool bidirectional);
+    bool operator==(const Edge &other) const;
 
     [[nodiscard]] int getSrc() const;
     [[nodiscard]] int getDst() const;

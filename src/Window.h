@@ -24,6 +24,11 @@ public:
     sf::RenderWindow& getWindow();
     Graph& getGraph();
     bool addNode(const Node& node);
+    bool removeNode(int nodeId);
+
+    sf::Color getNodeColor(int nodeId);
+    void setNodeColor(int nodeId, sf::Color color);
+    void edgeHandler(int srcId, int dstId);
     void drawGraph();
     void update();
 };

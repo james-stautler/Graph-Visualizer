@@ -1,6 +1,8 @@
 
 #include "Graph.h"
 
+#include <algorithm>
+
 Graph::Graph() {
     this->nodeMap = std::map<int, Node>();
     this->edges = std::vector<Edge>();
@@ -45,6 +47,9 @@ bool Graph::removeNode(int nodeId) {
         return false;
     }
     this->nodeMap.erase(nodeId);
+
+    auto it = std::remove_if(this->edges.begin(), this->edges.end(), [nodeId](const Edge& e) { return e.getSrc() == nodeId || e.getDst() == nodeId; });
+    this->edges.erase(it, this->edges.end());
     return true;
 }
 
