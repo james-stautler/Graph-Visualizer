@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 project(GraphVisualizer LANGUAGES CXX)
 
+enable_testing()
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 include(FetchContent)
@@ -12,7 +14,17 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(gv src/gv.cpp
+include(GoogleTest)
+FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        v1.14.0
+)
+FetchContent_MakeAvailable(googletest)
+
+
+add_executable(gv
+        src/gv.cpp
         src/Node.h
         src/Node.cpp
         src/Window.h
@@ -21,5 +33,16 @@ add_executable(gv src/gv.cpp
         src/Edge.cpp
         src/Graph.h
         src/Graph.cpp)
+
+add_executable(Tests
+        test/NodeTest.cpp
+        test/EdgeTest.cpp)
+
 target_compile_features(gv PRIVATE cxx_std_17)
 target_link_libraries(gv PRIVATE SFML::Graphics)
+
+target_compile_features(Tests PRIVATE cxx_std_17)
+target_link_libraries(Tests PRIVATE SFML::Graphics)
+target_link_libraries(Tests PRIVATE GTest::gtest_main)
+
+gtest_discover_tests(Tests)

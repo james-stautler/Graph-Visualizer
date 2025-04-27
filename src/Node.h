@@ -2,7 +2,7 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <SFML/Graphics/Color.hpp>
+#include "SFML/Graphics/Color.hpp"
 
 class Node {
 private:

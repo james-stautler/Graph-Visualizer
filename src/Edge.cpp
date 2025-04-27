@@ -16,7 +16,10 @@ Edge::Edge(int srcId, int dstId, const float weight, const bool bidirectional) {
 }
 
 bool Edge::operator==(const Edge& other) const {
-    return this->srcId == other.getSrc() && this->dstId == other.getDst();
+    return this->srcId == other.getSrc() &&
+            this->dstId == other.getDst() &&
+            this->weight == other.getWeight() &&
+            this->bidirectional == other.isBidirectional();
 }
 
 int Edge::getSrc() const {
