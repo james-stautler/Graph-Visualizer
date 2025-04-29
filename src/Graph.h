@@ -24,8 +24,8 @@ public:
      bool addNode(const Node& node);
      bool removeNode(int nodeId);
      bool checkIfEdgeExists(int srcId, int dstId);
-     bool addEdge(int srcId, int dstId);
-     bool addEdge(int srcId, int dstId, float weight);
+     bool addEdge(int srcId, int dstId, bool bidirectional);
+     bool addEdge(int srcId, int dstId, float weight, bool bidirectional);
      bool removeEdge(int srcId, int dstId);
 };
 

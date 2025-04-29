@@ -64,20 +64,29 @@ bool Graph::checkIfEdgeExists(int srcId, int dstId) {
 }
 
 
-bool Graph::addEdge(int srcId, int dstId) {
+bool Graph::addEdge(int srcId, int dstId, bool bidirectional) {
 
     for (const auto& edge: this->edges) {
-        if (edge.getSrc() == srcId && edge.getDst() == dstId) {
+        if ((edge.getSrc() == srcId && edge.getDst() == dstId) ||
+            (edge.getSrc() == dstId && edge.getDst() == srcId)) {
             return false;
         }
     }
 
-    Edge edge = Edge(srcId, dstId, true);
-    this->edges.push_back(edge);
+    if (bidirectional) {
+        Edge edge = Edge(srcId, dstId, true);
+        Edge edge_reverse = Edge(dstId, srcId, true);
+        this->edges.push_back(edge);
+        this->edges.push_back(edge_reverse);
+    } else {
+        Edge edge = Edge(srcId, dstId, false);
+        this->edges.push_back(edge);
+    }
+
     return true;
 }
 
-bool Graph::addEdge(int srcId, int dstId, float weight) {
+bool Graph::addEdge(int srcId, int dstId, float weight, bool bidirectional) {
 
     for (const auto& edge: this->edges) {
         if (edge.getSrc() == srcId && edge.getDst() == dstId) {
@@ -85,25 +94,33 @@ bool Graph::addEdge(int srcId, int dstId, float weight) {
         }
     }
 
-    Edge edge = Edge(srcId, dstId, weight, true);
-    this->edges.push_back(edge);
+    if (bidirectional) {
+        Edge edge = Edge(srcId, dstId, weight, true);
+        Edge edge_reverse = Edge(dstId, srcId, weight, true);
+        this->edges.push_back(edge);
+        this->edges.push_back(edge_reverse);
+    } else {
+        Edge edge = Edge(srcId, dstId, weight, false);
+        this->edges.push_back(edge);
+    }
+
     return true;
 }
 
 
 bool Graph::removeEdge(int srcId, int dstId) {
-
+    bool removed = false;
     for (int i = 0; i < this->edges.size(); i++) {
         if (this->edges[i].getSrc() == srcId && this->edges[i].getDst() == dstId) {
             this->edges.erase(this->edges.begin() + i);
-            return true;
+            removed = true;
         }
 
         if (this->edges[i].getSrc() == dstId && this->edges[i].getDst() == srcId) {
             this->edges.erase(this->edges.begin() + i);
-            return true;
+            removed = true;
         }
     }
-    return false;
+    return removed;
 }
 

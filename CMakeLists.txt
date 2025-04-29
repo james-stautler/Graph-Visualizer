@@ -36,7 +36,8 @@ add_executable(gv
 
 add_executable(Tests
         test/NodeTest.cpp
-        test/EdgeTest.cpp)
+        test/EdgeTest.cpp
+        test/GraphTest.cpp)
 
 target_compile_features(gv PRIVATE cxx_std_17)
 target_link_libraries(gv PRIVATE SFML::Graphics)

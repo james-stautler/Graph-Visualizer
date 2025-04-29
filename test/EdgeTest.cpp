@@ -10,12 +10,12 @@ TEST(Edge_Tests, Edge_Creation_Tests) {
     ASSERT_EQ(unidirectional_edge.getSrc(), 0);
     ASSERT_EQ(unidirectional_edge.getDst(), 1);
     ASSERT_EQ(unidirectional_edge.getWeight(), 1);
-    ASSERT_EQ(unidirectional_edge.isBidirectional(), false);
+    ASSERT_FALSE(unidirectional_edge.isBidirectional());
 
     ASSERT_EQ(bidirectional_edge.getSrc(), 2);
     ASSERT_EQ(bidirectional_edge.getDst(), 3);
     ASSERT_EQ(bidirectional_edge.getWeight(), 4);
-    ASSERT_EQ(bidirectional_edge.isBidirectional(), true);
+    ASSERT_TRUE(bidirectional_edge.isBidirectional());
 
     unidirectional_edge.setSource(10);
     unidirectional_edge.setDestination(11);
@@ -25,7 +25,7 @@ TEST(Edge_Tests, Edge_Creation_Tests) {
     ASSERT_EQ(unidirectional_edge.getSrc(), 10);
     ASSERT_EQ(unidirectional_edge.getDst(), 11);
     ASSERT_EQ(unidirectional_edge.getWeight(), 12);
-    ASSERT_EQ(unidirectional_edge.isBidirectional(), true);
+    ASSERT_TRUE(unidirectional_edge.isBidirectional());
 
 }
 
@@ -34,17 +34,17 @@ TEST(Edge_Tests, Edge_Equality_Tests) {
     Edge edge1 = Edge(0, 1, false);
     Edge edge2 = Edge(0, 1 , false);
 
-    ASSERT_EQ(edge1 == edge2, true);
+    ASSERT_TRUE(edge1 == edge2);
 
     Edge edge3 = Edge(2, 3, false);
 
-    ASSERT_EQ(edge1 == edge3, false);
+    ASSERT_FALSE(edge1 == edge3);
 
     Edge edge4 = Edge(0, 1, 2, false);
 
-    ASSERT_EQ(edge1 == edge4, false);
+    ASSERT_FALSE(edge1 == edge4);
 
     Edge edge5 = Edge(0, 1, true);
 
-    ASSERT_EQ(edge1 == edge5, false);
+    ASSERT_FALSE(edge1 == edge5);
 }

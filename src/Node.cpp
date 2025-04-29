@@ -11,6 +11,27 @@ Node::Node(int id, int x, int y, int radius, int padding, float value, sf::Color
     this->color = color;
 }
 
+bool Node::operator==(const Node &other) const {
+    return this->id == other.id &&
+            this->x == other.x &&
+            this->y == other.y &&
+            this->radius == other.radius &&
+            this->padding == other.padding &&
+            this->value == other.value &&
+            this->color == other.color;
+}
+
+bool Node::operator!=(const Node &other) const {
+    return this->id != other.id ||
+            this->x != other.x ||
+            this->y != other.y ||
+            this->radius != other.radius ||
+            this->padding != other.padding ||
+            this->value != other.value ||
+            this->color != other.color;
+}
+
+
 int Node::getId() const {
     return this->id;
 }

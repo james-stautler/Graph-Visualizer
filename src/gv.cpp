@@ -80,7 +80,8 @@ int main()
                                 }
                                 // Edge Handler
                                 if (selectedId_1 != -1 && selectedId_2 != -1) {
-                                    win.edgeHandler(selectedId_1, selectedId_2);
+                                    // All edges are bidirectional as of now
+                                    win.edgeHandler(selectedId_1, selectedId_2, true);
                                     selectedId_1 = -1;
                                     selectedId_2 = -1;
                                 }

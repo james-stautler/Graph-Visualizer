@@ -33,18 +33,27 @@ TEST(Node_Tests, Node_Bounds_Tests) {
     int outsideX = 100;
     int outsideY = 100;
 
-    ASSERT_EQ(node.withinBounds(outsideX,outsideY), false);
+    ASSERT_FALSE(node.withinBounds(outsideX,outsideY));
 
     int withinX = 27;
     int withinY = 27;
 
-    ASSERT_EQ(node.withinBounds(withinX,withinY), true);
-    ASSERT_EQ(node.strictlyWithinBounds(outsideX,outsideY), false);
+    ASSERT_TRUE(node.withinBounds(withinX,withinY));
+    ASSERT_FALSE(node.strictlyWithinBounds(outsideX,outsideY));
 
     int strictlyWithinX = 20;
     int strictlyWithinY = 20;
 
-    ASSERT_EQ(node.withinBounds(strictlyWithinX, strictlyWithinY), true);
-    ASSERT_EQ(node.strictlyWithinBounds(strictlyWithinX,strictlyWithinY), true);
+    ASSERT_TRUE(node.withinBounds(strictlyWithinX, strictlyWithinY));
+    ASSERT_TRUE(node.strictlyWithinBounds(strictlyWithinX,strictlyWithinY));
 
+}
+
+TEST(Node_Tests, Node_Equality_Tests) {
+    Node node1 = Node(0, 10, 10, 10, 10, 1, sf::Color::White);
+    Node node2 = Node(0, 10, 10, 10, 10, 1, sf::Color::White);
+    Node node3 = Node(0, 10, 10, 10, 10, 1, sf::Color::Red);
+
+    ASSERT_EQ(node1, node2);
+    ASSERT_NE(node1, node3);
 }

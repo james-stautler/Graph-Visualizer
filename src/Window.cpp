@@ -39,11 +39,11 @@ void Window::setNodeColor(int nodeId, sf::Color color) {
 }
 
 
-void Window::edgeHandler(int srcId, int dstId) {
+void Window::edgeHandler(int srcId, int dstId, bool bidirectional) {
     if (this->graph.checkIfEdgeExists(srcId, dstId) || this->graph.checkIfEdgeExists(dstId, srcId)) {
         this->graph.removeEdge(srcId, dstId);
     } else {
-        this->graph.addEdge(srcId, dstId);
+        this->graph.addEdge(srcId, dstId, bidirectional);
     }
     this->setNodeColor(srcId, sf::Color::Green);
     this->setNodeColor(dstId, sf::Color::Green);

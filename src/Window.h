@@ -28,7 +28,7 @@ public:
 
     sf::Color getNodeColor(int nodeId);
     void setNodeColor(int nodeId, sf::Color color);
-    void edgeHandler(int srcId, int dstId);
+    void edgeHandler(int srcId, int dstId, bool bidirectional);
     void drawGraph();
     void update();
 };

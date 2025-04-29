@@ -18,6 +18,9 @@ public:
     Node() = default;
     Node(int id, int x, int y, int radius, int padding, float value, sf::Color color);
 
+    bool operator==(const Node &other) const;
+    bool operator!=(const Node &other) const;
+
     [[nodiscard]] int getId() const;
     [[nodiscard]] int getX() const;
     [[nodiscard]] int getY() const;
