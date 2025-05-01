@@ -30,8 +30,8 @@ int main()
     const sf::Color RED = sf::Color::Red;
     const sf::Color GREEN = sf::Color::Green;
     const sf::Color BLUE = sf::Color::Blue;
-    const sf::Color LIGHT_GRAY = sf::Color::Color(148, 148, 148);
-    const sf::Color DARK_GRAY = sf::Color::Color(84, 84, 84);
+    const sf::Color LIGHT_GRAY = sf::Color {148, 148, 148};
+    const sf::Color DARK_GRAY = sf::Color { 84, 84, 84 };
 
     auto win = Window(WIDTH, HEIGHT, TITLE, FRAMERATE_LIMIT, font);
 
