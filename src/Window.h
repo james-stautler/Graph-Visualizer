@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "Graph.h"
+#include "Button.h"
 #include <iostream>
 
 class Window {
@@ -29,6 +30,7 @@ public:
     sf::Color getNodeColor(int nodeId);
     void setNodeColor(int nodeId, sf::Color color);
     void edgeHandler(int srcId, int dstId, bool bidirectional);
+    void drawButton(Button button);
     void drawGraph();
     void update();
 };

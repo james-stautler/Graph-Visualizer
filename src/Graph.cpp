@@ -56,7 +56,7 @@ bool Graph::removeNode(int nodeId) {
 bool Graph::checkIfEdgeExists(int srcId, int dstId) {
 
     for (const auto& edge: this->edges) {
-        if (edge.getSrc() == srcId && edge.getDst() == dstId) {
+        if ((edge.getSrc() == srcId && edge.getDst() == dstId) || (edge.getSrc() == dstId && edge.getDst() == srcId)) {
             return true;
         }
     }
@@ -114,11 +114,15 @@ bool Graph::removeEdge(int srcId, int dstId) {
         if (this->edges[i].getSrc() == srcId && this->edges[i].getDst() == dstId) {
             this->edges.erase(this->edges.begin() + i);
             removed = true;
+            break;
         }
+    }
 
+    for (int i = 0; i < this->edges.size(); i++) {
         if (this->edges[i].getSrc() == dstId && this->edges[i].getDst() == srcId) {
             this->edges.erase(this->edges.begin() + i);
             removed = true;
+            break;
         }
     }
     return removed;

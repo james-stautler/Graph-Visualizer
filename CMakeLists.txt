@@ -32,7 +32,9 @@ add_executable(gv
         src/Edge.h
         src/Edge.cpp
         src/Graph.h
-        src/Graph.cpp)
+        src/Graph.cpp
+        src/Button.h
+        src/Button.cpp)
 
 add_executable(Tests
         test/NodeTest.cpp

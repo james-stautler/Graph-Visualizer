@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "Button.h"
 #include <iostream>
 
 enum STATE {
@@ -9,7 +10,8 @@ enum STATE {
 
 enum GRAPH_CREATION_STATE {
     CREATE,
-    DELETE
+    DELETE,
+    RANDOM
 };
 
 int main()
@@ -19,14 +21,24 @@ int main()
     constexpr int FRAMERATE_LIMIT = 60;
     constexpr int NODE_RADIUS = 15;
     constexpr int NODE_PADDING = 30;
+    constexpr int BUTTON_HEIGHT = 50;
+    constexpr int BUTTON_WIDTH = 175;
     const std::string TITLE = "Graph Visualizer";
     const sf::Font font("../assets/swansea.ttf");
 
     const sf::Color BLACK = sf::Color::Black;
+    const sf::Color RED = sf::Color::Red;
     const sf::Color GREEN = sf::Color::Green;
     const sf::Color BLUE = sf::Color::Blue;
+    const sf::Color LIGHT_GRAY = sf::Color::Color(148, 148, 148);
+    const sf::Color DARK_GRAY = sf::Color::Color(84, 84, 84);
 
     auto win = Window(WIDTH, HEIGHT, TITLE, FRAMERATE_LIMIT, font);
+
+    std::vector<Button> buttons;
+    Button nodeCreationButton = Button(1650, 100, BUTTON_WIDTH, BUTTON_HEIGHT, true, DARK_GRAY, LIGHT_GRAY, "Create Node");
+    Button nodeDeletionButton = Button(1650, 165, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Delete Node");
+    Button randomGraphButton = Button(1650, 230, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Random Graph");
 
     int selectedId_1 = -1; // Selected src node
     int selectedId_2 = -1; // Selected dst node
@@ -39,14 +51,6 @@ int main()
         while (const std::optional event = win.getWindow().pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 win.getWindow().close();
-            }
-
-            if (event->is<sf::Event::KeyPressed>()) {
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) {
-                    graphCreationState = CREATE;
-                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) {
-                    graphCreationState = DELETE;
-                }
             }
 
             if (state == GRAPH_CREATION) {
@@ -97,7 +101,36 @@ int main()
                             }
                         }
                     } else {
-                        // TODO: Handle button functionality here
+                        // Handle button functionality
+                        if (nodeCreationButton.isWithinBounds(pos.x, pos.y)) {
+                            graphCreationState = CREATE;
+                            nodeCreationButton.flipActiveState();
+                            if (nodeDeletionButton.isActive()) {
+                                nodeDeletionButton.flipActiveState();
+                            }
+                            if (randomGraphButton.isActive()) {
+                                randomGraphButton.flipActiveState();
+                            }
+                        } else if (nodeDeletionButton.isWithinBounds(pos.x, pos.y)) {
+                            graphCreationState = DELETE;
+                            nodeDeletionButton.flipActiveState();
+                            if (nodeCreationButton.isActive()) {
+                                nodeCreationButton.flipActiveState();
+                            }
+                            if (randomGraphButton.isActive()) {
+                                randomGraphButton.flipActiveState();
+                            }
+                        } else if (randomGraphButton.isWithinBounds(pos.x, pos.y)) {
+                            graphCreationState = RANDOM;
+                            randomGraphButton.flipActiveState();
+                            if (nodeCreationButton.isActive()) {
+                                nodeCreationButton.flipActiveState();
+                            }
+                            if (nodeDeletionButton.isActive()) {
+                                nodeDeletionButton.flipActiveState();
+                            }
+                            // TODO: Random Graph Generation
+                        }
                     }
                 }
             } else if (state == NODE_SELECTION) {
@@ -109,6 +142,9 @@ int main()
 
         win.getWindow().clear();
         win.update();
+        win.drawButton(nodeCreationButton);
+        win.drawButton(nodeDeletionButton);
+        win.drawButton(randomGraphButton);
         win.getWindow().display();
     }
 }

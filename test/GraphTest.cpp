@@ -65,4 +65,7 @@ TEST(Graph_Tests, Graph_Edges_Tests) {
 
     graph.removeEdge(1, 3);
     ASSERT_EQ(graph.getEdges().size(), 0);
+
+    graph.addEdge(1, 2, true);
+    graph.addEdge(2, 1, false);
 }

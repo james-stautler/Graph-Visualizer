@@ -49,6 +49,30 @@ void Window::edgeHandler(int srcId, int dstId, bool bidirectional) {
     this->setNodeColor(dstId, sf::Color::Green);
 }
 
+void Window::drawButton(Button button) {
+    sf::RectangleShape buttonShape(sf::Vector2f(static_cast<float>(button.getWidth()), static_cast<float>(button.getHeight())));
+    const auto pos = static_cast<sf::Vector2f>(sf::Vector2i(button.getX(), button.getY()));
+    buttonShape.setPosition(pos);
+    buttonShape.setFillColor(button.getCurrentColor());
+
+    auto text = sf::Text(this->font);
+    text.setCharacterSize(20);
+    text.setFillColor(sf::Color::Black);
+    text.setString(button.getText());
+
+    sf::FloatRect textBounds = text.getLocalBounds();
+    float textOriginX = textBounds.position.x + textBounds.size.x / 2.0f;
+    float textOriginY = textBounds.position.y + textBounds.size.y / 2.0f;
+    text.setOrigin(sf::Vector2f(textOriginX, textOriginY));
+
+    float buttonCenterX = button.getX() + button.getWidth() / 2.0f;
+    float buttonCenterY = button.getY() + button.getHeight() / 2.0f;
+    text.setPosition(sf::Vector2f(buttonCenterX, buttonCenterY));
+
+    this->window.draw(buttonShape);
+    this->window.draw(text);
+}
+
 
 void Window::drawGraph() {
     for (const auto& pair: this->graph.getNodeMap()) {
