@@ -7,6 +7,8 @@ Window::Window(const int width, const int height, const std::string &title, cons
     this->title = title;
     this->framerateLimit = framerateLimit;
     this->font = font;
+    this->graph = Graph();
+    this->buttons = std::vector<std::reference_wrapper<Button>>();
 
     const auto windowSize = sf::Vector2u(this->width, this->height);
     this->window = sf::RenderWindow(sf::VideoMode(windowSize), this->title);
@@ -29,6 +31,21 @@ bool Window::removeNode(int nodeId) {
     return this->graph.removeNode(nodeId);
 }
 
+std::vector<std::reference_wrapper<Button>> Window::getButtons() {
+    return this->buttons;
+}
+
+void Window::addButton(std::reference_wrapper<Button> button) {
+    this->buttons.push_back(button);
+}
+
+void Window::setAllButtonsInactive() {
+    for (auto& button : this->buttons) {
+        if (button.get().isActive()) {
+            button.get().flipActiveState();
+        }
+    }
+}
 
 sf::Color Window::getNodeColor(int nodeId) {
     return this->graph.getNodeMap().at(nodeId).getColor();
@@ -45,11 +62,38 @@ void Window::edgeHandler(int srcId, int dstId, bool bidirectional) {
     } else {
         this->graph.addEdge(srcId, dstId, bidirectional);
     }
-    this->setNodeColor(srcId, sf::Color::Green);
-    this->setNodeColor(dstId, sf::Color::Green);
 }
 
-void Window::drawButton(Button button) {
+void Window::generateRandomGraphBidirectional(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted) {
+    this->graph = Graph();
+    for (int i = 0; i < nodes; i++) {
+        int randX = rand() % (int(this->width * 0.8 - 2 * padding)) + padding;
+        int randY = rand() % (this->height - 2 * padding) + padding;
+        while (this->graph.checkWithinNodeBoundary(randX, randY) != -1) {
+            randX = rand() % (int(this->width * 0.8));
+            randY = rand() % (this->height);
+        }
+        float weight = 1;
+        if (weighted) {
+            // Random weight here
+        }
+        Node node = Node(this->graph.assignNodeId(), randX, randY, nodeRadius, padding, weight, nodeColor);
+        this->graph.addNode(node);
+    }
+
+    for (int i = 0; i < edges; i++) {
+        int randSrc = rand() % nodes;
+        int randDst = rand() % nodes;
+        while (this->graph.checkIfEdgeExists(randSrc, randDst)) {
+            randSrc = rand() % nodes;
+            randDst = rand() % nodes;
+        }
+        this->graph.addEdge(randSrc, randDst, true);
+    }
+}
+
+
+void Window::drawButton(Button& button) {
     sf::RectangleShape buttonShape(sf::Vector2f(static_cast<float>(button.getWidth()), static_cast<float>(button.getHeight())));
     const auto pos = static_cast<sf::Vector2f>(sf::Vector2i(button.getX(), button.getY()));
     buttonShape.setPosition(pos);
