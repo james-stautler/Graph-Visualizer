@@ -8,7 +8,8 @@ enum GRAPH_CREATION_STATE {
     RANDOM,
     CLEARED,
     SELECT_START,
-    SELECT_END
+    SELECT_END,
+    NONE
 };
 
 int main()
@@ -52,6 +53,8 @@ int main()
     Button selectEndNodeButton = Button(SELECT_NODE_BUTTON_BASE_X, SELECT_NODE_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Choose End Node");
     Button bfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "BFS");
     Button dfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "DFS");
+    Button kruskalButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 2), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Kruskal's MST");
+    Button primsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 3), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Prim's MST");
 
     win.addButton(std::reference_wrapper<Button>(nodeCreationButton));
     win.addButton(std::reference_wrapper<Button>(nodeDeletionButton));
@@ -61,6 +64,8 @@ int main()
     win.addButton(std::reference_wrapper<Button>(selectEndNodeButton));
     win.addButton(std::reference_wrapper<Button>(bfsButton));
     win.addButton(std::reference_wrapper<Button>(dfsButton));
+    win.addButton(std::reference_wrapper<Button>(kruskalButton));
+    win.addButton(std::reference_wrapper<Button>(primsButton));
 
     int selectedId_1 = -1; // Selected src node
     int selectedId_2 = -1; // Selected dst node
@@ -188,32 +193,38 @@ int main()
                         win.setAllButtonsInactive();
                         selectEndNodeButton.flipActiveState();
                     } else if (bfsButton.isWithinBounds(pos.x, pos.y)) {
+                        graphCreationState = NONE;
+                        win.setAllButtonsInactive();
+                        bfsButton.flipActiveState();
                         if (startId != -1 && endId != -1) {
                             if (win.BFS(startId, endId, ALGORITHM_SPEED, false)) {
                                 win.resetGraph(false);
                                 win.drawPath(startId, endId);
+                                win.update();
                                 win.getWindow().display();
                             } else {
                                 win.redOutGraph();
-                                win.getWindow().clear();
                                 win.update();
                                 win.getWindow().display();
-                                reset = true;
                             };
-                            // TODO: Need to handle transition from solved graph back to empty graph
+                            reset = true;
                         }
+                        bfsButton.flipActiveState();
                     } else if (dfsButton.isWithinBounds(pos.x, pos.y)) {
-                        // TODO: ALGORITHM
+                        // TODO: DFS
+                    } else if (kruskalButton.isWithinBounds(pos.x, pos.y)) {
+                        // TODO: KRUSKAL'S ALGORITHM
+                    } else if (primsButton.isWithinBounds(pos.x, pos.y)) {
+                        // TODO: PRIM'S ALGORITHM
                     }
                 }
             }
         }
 
         if (reset) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(4000));
             win.resetGraph(true);
         }
-        win.getWindow().clear();
         win.update();
         win.getWindow().display();
     }

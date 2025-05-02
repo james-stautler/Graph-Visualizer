@@ -21,6 +21,7 @@ private:
     Graph graph;
 
 public:
+    Window(); // Essentially a mock for testing purposes
     Window(int width, int height, const std::string &title, int framerateLimit, sf::Font font);
     sf::RenderWindow& getWindow();
     Graph& getGraph();

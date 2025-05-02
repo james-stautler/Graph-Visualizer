@@ -49,5 +49,6 @@ target_link_libraries(gv PRIVATE SFML::Graphics)
 target_compile_features(Tests PRIVATE cxx_std_17)
 target_link_libraries(Tests PRIVATE SFML::Graphics)
 target_link_libraries(Tests PRIVATE GTest::gtest_main)
+target_link_libraries(Tests PRIVATE GTest::gmock_main)
 
 gtest_discover_tests(Tests)

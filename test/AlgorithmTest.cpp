@@ -4,8 +4,8 @@
 
 TEST(Algorithm_Tests, BFS_TEST) {
 
-    const sf::Font font("../assets/swansea.ttf");
-    Window win = Window(1920, 1080, "Test Window", 60, font);
+    //const sf::Font font("../assets/swansea.ttf");
+    Window win = Window();
 
     win.addNode(Node(0, 100, 100, 10, 5, 1, sf::Color::White));
     win.addNode(Node(1, 200, 200, 10, 5, 1, sf::Color::White));

@@ -4,6 +4,10 @@
 #include <iostream>
 #include <thread>
 
+Window::Window() {
+    this->graph = Graph();
+}
+
 Window::Window(const int width, const int height, const std::string &title, const int framerateLimit, sf::Font font) {
     this->width = width;
     this->height = height;
@@ -149,6 +153,7 @@ void Window::drawGraph() {
 
 
 void Window::update() {
+    this->window.clear();
     for (auto &button: this->buttons) {
         this->drawButton(button);
     }
@@ -199,7 +204,6 @@ bool Window::BFS(int start, int end, int speed, bool testing) {
     }
 
     return false;
-
 }
 
 void Window::resetGraph(bool hardReset) {
