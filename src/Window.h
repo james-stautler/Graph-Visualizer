@@ -44,6 +44,7 @@ public:
     void redOutGraph();
     void drawPath(int startId, int endId);
     bool BFS(int start, int end, int speed, bool testing);
+    bool DFS(int curr, int start, int end, int speed, std::set<int>& visited, bool testing);
 
 };
 

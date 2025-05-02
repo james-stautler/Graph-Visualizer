@@ -2,6 +2,7 @@
 #include "Window.h"
 
 #include <iostream>
+#include <stack>
 #include <thread>
 
 Window::Window() {
@@ -160,52 +161,6 @@ void Window::update() {
     this->drawGraph();
 }
 
-bool Window::BFS(int start, int end, int speed, bool testing) {
-    std::queue<int> nodeQueue;
-    std::set<int> visited;
-
-    nodeQueue.push(start);
-    while (!nodeQueue.empty()) {
-        auto node = nodeQueue.front();
-        nodeQueue.pop();
-        if (visited.find(node) != visited.end()) {
-            continue;
-        }
-        if (node == end) {
-            return true;
-        }
-        visited.insert(node);
-        if (node != start && node != end) {
-            this->setNodeColor(node, sf::Color::Green);
-        }
-        std::vector<int> neighbors = this->graph.getAdjMap().at(node);
-        for (int i = 0; i < neighbors.size(); i++) {
-            for (auto &edge: this->graph.getEdges()) {
-                if ((edge->getSrc() == node && edge->getDst() == neighbors[i]) ||
-                    (edge->getSrc() == neighbors[i] && edge->getDst() == node)) {
-                    edge->setColor(sf::Color::Red);
-                }
-            }
-            if (this->graph.getNodeMap().at(neighbors[i]).getPrev() == -1 && neighbors[i] != start) {
-                this->graph.getNodeMap().at(neighbors[i]).setPrev(node);
-            }
-            nodeQueue.push(neighbors[i]);
-            if (neighbors[i] != start && neighbors[i] != end) {
-                this->setNodeColor(neighbors[i], sf::Color { 199, 119, 0 });
-            }
-        }
-        if (testing) {
-            continue;
-        }
-        this->window.clear();
-        this->update();
-        this->getWindow().display();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / speed));
-    }
-
-    return false;
-}
-
 void Window::resetGraph(bool hardReset) {
     for (auto &pair: this->graph.getNodeMap()) {
         pair.second.setColor(sf::Color::Red);
@@ -245,6 +200,97 @@ void Window::drawPath(int startId, int endId) {
     }
     this->graph.getNodeMap().at(startId).setColor(sf::Color { 255, 105, 180 });
     this->graph.getNodeMap().at(endId).setColor(sf::Color { 255, 105, 180 });
+}
+
+// ALGORITHMS
+
+bool Window::BFS(int start, int end, int speed, bool testing) {
+    std::queue<int> nodeQueue;
+    std::set<int> visited;
+
+    nodeQueue.push(start);
+    while (!nodeQueue.empty()) {
+        auto node = nodeQueue.front();
+        nodeQueue.pop();
+        if (visited.find(node) != visited.end()) {
+            continue;
+        }
+        if (node == end) {
+            return true;
+        }
+        visited.insert(node);
+        if (node != start && node != end) {
+            this->setNodeColor(node, sf::Color::Green);
+        }
+        std::vector<int> neighbors = this->graph.getAdjMap().at(node);
+        for (int i = 0; i < neighbors.size(); i++) {
+            for (auto &edge: this->graph.getEdges()) {
+                if ((edge->getSrc() == node && edge->getDst() == neighbors[i]) ||
+                    (edge->getSrc() == neighbors[i] && edge->getDst() == node)) {
+                    edge->setColor(sf::Color::Red);
+                    }
+            }
+            if (this->graph.getNodeMap().at(neighbors[i]).getPrev() == -1 && neighbors[i] != start) {
+                this->graph.getNodeMap().at(neighbors[i]).setPrev(node);
+            }
+            nodeQueue.push(neighbors[i]);
+            if (neighbors[i] != start && neighbors[i] != end) {
+                this->setNodeColor(neighbors[i], sf::Color { 199, 119, 0 });
+            }
+        }
+        if (testing) {
+            continue;
+        }
+        this->window.clear();
+        this->update();
+        this->getWindow().display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / speed));
+    }
+
+    return false;
+}
+
+bool Window::DFS(int curr, int start, int end, int speed, std::set<int>& visited, bool testing) {
+
+    if (!testing) {
+        this->setNodeColor(curr, sf::Color { 199, 119, 0 });
+        this->window.clear();
+        this->update();
+        this->getWindow().display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / speed));
+    }
+
+    bool res = false;
+    if (curr == end) {
+        return true;
+    }
+
+    if (visited.find(curr) != visited.end()) {
+        return false;
+    }
+    visited.insert(curr);
+
+    std::vector<int> neighbors = this->graph.getAdjMap().at(curr);
+    for (int i = 0; i < neighbors.size(); i++) {
+        for (auto &edge: this->graph.getEdges()) {
+            if ((edge->getSrc() == curr && edge->getDst() == neighbors[i]) ||
+                (edge->getSrc() == neighbors[i] && edge->getDst() == curr)) {
+                edge->setColor(sf::Color::Red);
+                }
+        }
+        if (this->graph.getNodeMap().at(neighbors[i]).getPrev() == -1 && neighbors[i] != start) {
+            this->graph.getNodeMap().at(neighbors[i]).setPrev(curr);
+        }
+        res |= this->DFS(neighbors[i], start, end, speed, visited, testing);
+        if (res) {
+            break;
+        }
+        if (neighbors[i] != start && neighbors[i] != end) {
+            this->setNodeColor(neighbors[i], sf::Color { 199, 119, 0 });
+        }
+    }
+    this->setNodeColor(curr, sf::Color::Green);
+    return res;
 }
 
 

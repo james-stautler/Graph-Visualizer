@@ -211,7 +211,23 @@ int main()
                         }
                         bfsButton.flipActiveState();
                     } else if (dfsButton.isWithinBounds(pos.x, pos.y)) {
-                        // TODO: DFS
+                        graphCreationState = NONE;
+                        win.setAllButtonsInactive();
+                        dfsButton.flipActiveState();
+                        if (startId != -1 && endId != -1) {
+                            std::set<int> visited;
+                            if (win.DFS(startId, startId, endId, ALGORITHM_SPEED, visited, false)) {
+                                win.resetGraph(false);
+                                win.drawPath(startId, endId);
+                                win.update();
+                                win.getWindow().display();
+                            } else {
+                                win.redOutGraph();
+                                win.update();
+                                win.getWindow().display();
+                            }
+                            reset = true;
+                        }
                     } else if (kruskalButton.isWithinBounds(pos.x, pos.y)) {
                         // TODO: KRUSKAL'S ALGORITHM
                     } else if (primsButton.isWithinBounds(pos.x, pos.y)) {
