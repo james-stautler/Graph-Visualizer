@@ -20,13 +20,15 @@ TEST(Algorithm_Tests, BFS_TEST) {
 
     ASSERT_TRUE(win.BFS(0, 4, 1, true));
 
+
+    win.resetGraph(false);
     ASSERT_EQ(win.getGraph().getNodeMap().at(0).getPrev(), -1);
     ASSERT_EQ(win.getGraph().getNodeMap().at(1).getPrev(), 0);
     ASSERT_EQ(win.getGraph().getNodeMap().at(2).getPrev(), 1);
     ASSERT_EQ(win.getGraph().getNodeMap().at(3).getPrev(), 2);
     ASSERT_EQ(win.getGraph().getNodeMap().at(4).getPrev(), 3);
 
-    win.resetGraph();
+    win.resetGraph(true);
     ASSERT_EQ(win.getGraph().getNodeMap().at(0).getPrev(), -1);
     ASSERT_EQ(win.getGraph().getNodeMap().at(1).getPrev(), -1);
     ASSERT_EQ(win.getGraph().getNodeMap().at(2).getPrev(), -1);

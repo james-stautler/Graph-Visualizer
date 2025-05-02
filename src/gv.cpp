@@ -1,12 +1,6 @@
 #include "Window.h"
 #include "Button.h"
-#include <iostream>
 #include <thread>
-
-enum STATE {
-    GRAPH_CREATION,
-    ALGORITHM
-};
 
 enum GRAPH_CREATION_STATE {
     CREATE,
@@ -36,7 +30,7 @@ int main()
 
     constexpr int RANDOM_NODES = 25;
     constexpr int RANDOM_EDGES = 35;
-    constexpr int ALGORITHM_SPEED = 1;
+    constexpr int ALGORITHM_SPEED = 5;
 
     const std::string TITLE = "Graph Visualizer";
     const sf::Font font("../assets/swansea.ttf");
@@ -77,6 +71,8 @@ int main()
     GRAPH_CREATION_STATE graphCreationState = CREATE;
 
     while (win.getWindow().isOpen()) {
+
+        bool reset = false;
 
         while (const std::optional event = win.getWindow().pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
@@ -194,12 +190,15 @@ int main()
                     } else if (bfsButton.isWithinBounds(pos.x, pos.y)) {
                         if (startId != -1 && endId != -1) {
                             if (win.BFS(startId, endId, ALGORITHM_SPEED, false)) {
-                                win.resetGraph();
+                                win.resetGraph(false);
                                 win.drawPath(startId, endId);
+                                win.getWindow().display();
                             } else {
                                 win.redOutGraph();
                                 win.getWindow().clear();
                                 win.update();
+                                win.getWindow().display();
+                                reset = true;
                             };
                             // TODO: Need to handle transition from solved graph back to empty graph
                         }
@@ -210,6 +209,10 @@ int main()
             }
         }
 
+        if (reset) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            win.resetGraph(true);
+        }
         win.getWindow().clear();
         win.update();
         win.getWindow().display();

@@ -39,7 +39,7 @@ public:
     void update();
 
     void clearGraph();
-    void resetGraph();
+    void resetGraph(bool hardReset);
     void redOutGraph();
     void drawPath(int startId, int endId);
     bool BFS(int start, int end, int speed, bool testing);

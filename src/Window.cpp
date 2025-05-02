@@ -202,10 +202,12 @@ bool Window::BFS(int start, int end, int speed, bool testing) {
 
 }
 
-void Window::resetGraph() {
+void Window::resetGraph(bool hardReset) {
     for (auto &pair: this->graph.getNodeMap()) {
         pair.second.setColor(sf::Color::Red);
-        pair.second.setPrev(-1);
+        if (hardReset) {
+            pair.second.setPrev(-1);
+        }
     }
     for (auto &edge: this->graph.getEdges()) {
         edge->setColor(sf::Color::White);
