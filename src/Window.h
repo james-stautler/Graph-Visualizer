@@ -6,7 +6,8 @@
 #include <string>
 #include "Graph.h"
 #include "Button.h"
-#include <cstdlib>
+#include <queue>
+#include <set>
 
 class Window {
 private:
@@ -31,11 +32,18 @@ public:
     void addButton(std::reference_wrapper<Button> button);
     void setAllButtonsInactive();
     void setNodeColor(int nodeId, sf::Color color);
-    void edgeHandler(int srcId, int dstId, bool bidirectional);
+    void edgeHandler(int srcId, int dstId, bool bidirectional, sf::Color color);
     void generateRandomGraphBidirectional(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted);
     void drawButton(Button& button);
     void drawGraph();
     void update();
+
+    void clearGraph();
+    void resetGraph();
+    void redOutGraph();
+    void drawPath(int startId, int endId);
+    bool BFS(int start, int end, int speed, bool testing);
+
 };
 
 #endif //WINDOW_H

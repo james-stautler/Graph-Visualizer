@@ -45,28 +45,35 @@ TEST(Graph_Tests, Graph_Edges_Tests) {
     graph.addNode(node4);
     graph.addNode(node5);
 
-
-
-    graph.addEdge(1, 2, true);
+    ASSERT_TRUE(graph.addEdge(1, 2, true, sf::Color::White));
     ASSERT_EQ(graph.getEdges().size(), 2);
+    ASSERT_EQ(graph.getAdjMap().at(1).size(), 1);
+    ASSERT_EQ(graph.getAdjMap().at(2).size(), 1);
     ASSERT_TRUE(graph.checkIfEdgeExists(1, 2));
     ASSERT_FALSE(graph.checkIfEdgeExists(1, 5));
 
-    graph.addEdge(3, 2, false);
+    graph.addEdge(3, 2, false, sf::Color::White);
     ASSERT_EQ(graph.getEdges().size(), 3);
+    ASSERT_EQ(graph.getAdjMap().at(2).size(), 1);
+    ASSERT_EQ(graph.getAdjMap().at(3).size(), 1);
 
-    graph.addEdge(4, 2, false);
-    graph.addEdge(5, 2, true);
+    graph.addEdge(4, 2, false, sf::Color::White);
+    graph.addEdge(5, 2, true, sf::Color::White);
     ASSERT_EQ(graph.getEdges().size(), 6);
+    ASSERT_EQ(graph.getAdjMap().at(2).size(), 2);
 
-    graph.addEdge(1, 3, true);
     graph.removeNode(2);
+    ASSERT_EQ(graph.getAdjMap().at(3).size(), 0);
+    graph.addEdge(1, 3, true, sf::Color::White);
     ASSERT_EQ(graph.getEdges().size(), 2);
+    ASSERT_EQ(graph.getAdjMap().at(3).size(), 1);
+    ASSERT_EQ(graph.getAdjMap().find(2), graph.getAdjMap().end());
+    graph.addNode(node2);
 
     graph.removeEdge(1, 3);
     ASSERT_EQ(graph.getEdges().size(), 0);
 
-    graph.addEdge(1, 2, true);
+    graph.addEdge(1, 2, true, sf::Color::White);
     ASSERT_EQ(graph.getEdges().size(), 2);
     graph.removeEdge(2, 1);
     ASSERT_EQ(graph.getEdges().size(), 0);

@@ -13,6 +13,7 @@ private:
     int padding;
     float value;
     sf::Color color;
+    int prev;
 
 public:
     Node() = default;
@@ -27,6 +28,7 @@ public:
     [[nodiscard]] int getRadius() const;
     [[nodiscard]] float getValue() const;
     [[nodiscard]] sf::Color getColor() const;
+    [[nodiscard]] int getPrev() const;
 
     bool withinBounds(int x, int y) const;
     bool strictlyWithinBounds(int x, int y) const;
@@ -36,6 +38,7 @@ public:
     void setRadius(int radius);
     void setValue(float value);
     void setColor(sf::Color color);
+    void setPrev(int prev);
 
 };
 

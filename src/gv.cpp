@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "Button.h"
 #include <iostream>
+#include <thread>
 
 enum STATE {
     GRAPH_CREATION,
@@ -11,6 +12,7 @@ enum GRAPH_CREATION_STATE {
     CREATE,
     DELETE,
     RANDOM,
+    CLEARED,
     SELECT_START,
     SELECT_END
 };
@@ -26,47 +28,45 @@ int main()
     constexpr int CREATION_BUTTON_BASE_X = 1650;
     constexpr int CREATION_BUTTON_BASE_Y = 100;
     constexpr int SELECT_NODE_BUTTON_BASE_X = 1650;
-    constexpr int SELECT_NODE_BUTTON_BASE_Y = 350;
+    constexpr int SELECT_NODE_BUTTON_BASE_Y = 415;
     constexpr int ALGORITHM_BUTTON_BASE_X = 1650;
-    constexpr int ALGORITHM_BUTTON_BASE_Y = 535;
-    constexpr int START_BUTTON_BASE_X = 1650;
-    constexpr int START_BUTTON_BASE_Y = 720;
+    constexpr int ALGORITHM_BUTTON_BASE_Y = 600;
     constexpr int BUTTON_HEIGHT = 50;
     constexpr int BUTTON_WIDTH = 200;
 
-    constexpr int RANDOM_NODES = 75;
-    constexpr int RANDOM_EDGES = 100;
+    constexpr int RANDOM_NODES = 25;
+    constexpr int RANDOM_EDGES = 35;
+    constexpr int ALGORITHM_SPEED = 1;
 
     const std::string TITLE = "Graph Visualizer";
     const sf::Font font("../assets/swansea.ttf");
 
-    const sf::Color BLACK = sf::Color::Black;
     const sf::Color RED = sf::Color::Red;
-    const sf::Color GREEN = sf::Color::Green;
+    const sf::Color WHITE = sf::Color::White;
     const sf::Color BLUE = sf::Color::Blue;
     const sf::Color LIGHT_GRAY = sf::Color {148, 148, 148};
     const sf::Color DARK_GRAY = sf::Color { 84, 84, 84 };
-    const sf::Color ORANGE = sf::Color { 255, 165, 0 };
+    const sf::Color PINK = sf::Color { 255, 105, 180 };
 
     auto win = Window(WIDTH, HEIGHT, TITLE, FRAMERATE_LIMIT, font);
 
     Button nodeCreationButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, true, DARK_GRAY, LIGHT_GRAY, "Create Node");
     Button nodeDeletionButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Delete Node");
     Button randomGraphButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 2), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Random Graph");
+    Button clearGraphButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 3), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Clear Graph");
     Button selectStartNodeButton = Button(SELECT_NODE_BUTTON_BASE_X, SELECT_NODE_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Choose Start Node");
     Button selectEndNodeButton = Button(SELECT_NODE_BUTTON_BASE_X, SELECT_NODE_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Choose End Node");
     Button bfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "BFS");
     Button dfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "DFS");
-    Button startButton = Button(SELECT_NODE_BUTTON_BASE_X, START_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Start");
 
     win.addButton(std::reference_wrapper<Button>(nodeCreationButton));
     win.addButton(std::reference_wrapper<Button>(nodeDeletionButton));
     win.addButton(std::reference_wrapper<Button>(randomGraphButton));
+    win.addButton(std::reference_wrapper<Button>(clearGraphButton));
     win.addButton(std::reference_wrapper<Button>(selectStartNodeButton));
     win.addButton(std::reference_wrapper<Button>(selectEndNodeButton));
     win.addButton(std::reference_wrapper<Button>(bfsButton));
     win.addButton(std::reference_wrapper<Button>(dfsButton));
-    win.addButton(std::reference_wrapper<Button>(startButton));
 
     int selectedId_1 = -1; // Selected src node
     int selectedId_2 = -1; // Selected dst node
@@ -93,21 +93,21 @@ int main()
                             // Select Nodes
                             if (win.getGraph().getNodeMap().at(nodeId).strictlyWithinBounds(pos.x, pos.y)) {
                                 sf::Color nodeColor = win.getNodeColor(nodeId);
-                                if (nodeColor == GREEN) {
+                                if (nodeColor == RED) {
                                     win.setNodeColor(nodeId, BLUE);
                                     if (selectedId_1 == -1) {
                                         selectedId_1 = nodeId;
                                     } else if (selectedId_2 == -1) {
                                         selectedId_2 = nodeId;
                                     }
-                                } else if (nodeColor == ORANGE) {
+                                } else if (nodeColor == PINK) {
                                     if (selectedId_1 == -1) {
                                         selectedId_1 = nodeId;
                                     } else if (selectedId_2 == -1) {
                                         selectedId_2 = nodeId;
                                     }
                                 } else {
-                                    win.setNodeColor(nodeId, GREEN);
+                                    win.setNodeColor(nodeId, RED);
                                     if (selectedId_1 == nodeId) {
                                         selectedId_1 = -1;
                                     } else if (selectedId_2 == nodeId) {
@@ -118,19 +118,19 @@ int main()
                             // Edge Handler
                             if (selectedId_1 != -1 && selectedId_2 != -1) {
                                 // All edges are bidirectional as of now
-                                win.edgeHandler(selectedId_1, selectedId_2, true);
-                                if (win.getNodeColor(selectedId_1) != ORANGE) {
-                                    win.setNodeColor(selectedId_1, GREEN);
+                                win.edgeHandler(selectedId_1, selectedId_2, true, WHITE);
+                                if (win.getNodeColor(selectedId_1) != PINK) {
+                                    win.setNodeColor(selectedId_1, RED);
                                 }
-                                if (win.getNodeColor(selectedId_2) != ORANGE) {
-                                    win.setNodeColor(selectedId_2, GREEN);
+                                if (win.getNodeColor(selectedId_2) != PINK) {
+                                    win.setNodeColor(selectedId_2, RED);
                                 }
                                 selectedId_1 = -1;
                                 selectedId_2 = -1;
                             }
 
                         } else {
-                            win.addNode(Node(win.getGraph().assignNodeId(), pos.x, pos.y, NODE_RADIUS, NODE_PADDING, 1, GREEN));
+                            win.addNode(Node(win.getGraph().assignNodeId(), pos.x, pos.y, NODE_RADIUS, NODE_PADDING, 1, RED));
                         }
                     } else if (graphCreationState == DELETE) {
                         if (nodeId != -1) {
@@ -141,18 +141,18 @@ int main()
                     } else if (graphCreationState == SELECT_START) {
                         if (nodeId != -1) {
                             if (startId != -1) {
-                                win.setNodeColor(startId, GREEN);
+                                win.setNodeColor(startId, RED);
                             }
                             startId = nodeId;
-                            win.setNodeColor(startId, ORANGE);
+                            win.setNodeColor(startId, PINK);
                         }
                     } else if (graphCreationState == SELECT_END) {
                         if (nodeId != -1) {
                             if (endId != -1) {
-                                win.setNodeColor(endId, GREEN);
+                                win.setNodeColor(endId, RED);
                             }
                             endId = nodeId;
-                            win.setNodeColor(endId, ORANGE);
+                            win.setNodeColor(endId, PINK);
                         }
                     }
                 } else {
@@ -169,7 +169,16 @@ int main()
                         graphCreationState = RANDOM;
                         win.setAllButtonsInactive();
                         randomGraphButton.flipActiveState();
-                        win.generateRandomGraphBidirectional(RANDOM_NODES, RANDOM_EDGES, NODE_RADIUS, NODE_PADDING, GREEN, false);
+                        win.generateRandomGraphBidirectional(RANDOM_NODES, RANDOM_EDGES, NODE_RADIUS, NODE_PADDING, RED, false);
+                        selectedId_1 = -1;
+                        selectedId_2 = -1;
+                        startId = -1;
+                        endId = -1;
+                    } else if (clearGraphButton.isWithinBounds(pos.x, pos.y)) {
+                        graphCreationState = CLEARED;
+                        win.clearGraph();
+                        win.setAllButtonsInactive();
+                        clearGraphButton.flipActiveState();
                         selectedId_1 = -1;
                         selectedId_2 = -1;
                         startId = -1;
@@ -183,7 +192,17 @@ int main()
                         win.setAllButtonsInactive();
                         selectEndNodeButton.flipActiveState();
                     } else if (bfsButton.isWithinBounds(pos.x, pos.y)) {
-                        // TODO: ALGORITHM
+                        if (startId != -1 && endId != -1) {
+                            if (win.BFS(startId, endId, ALGORITHM_SPEED, false)) {
+                                win.resetGraph();
+                                win.drawPath(startId, endId);
+                            } else {
+                                win.redOutGraph();
+                                win.getWindow().clear();
+                                win.update();
+                            };
+                            // TODO: Need to handle transition from solved graph back to empty graph
+                        }
                     } else if (dfsButton.isWithinBounds(pos.x, pos.y)) {
                         // TODO: ALGORITHM
                     }
@@ -193,9 +212,6 @@ int main()
 
         win.getWindow().clear();
         win.update();
-        for (auto& button: win.getButtons()) {
-            win.drawButton(button);
-        }
         win.getWindow().display();
     }
 }

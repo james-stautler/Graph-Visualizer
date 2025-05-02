@@ -1,6 +1,9 @@
 
 #include "Window.h"
 
+#include <iostream>
+#include <thread>
+
 Window::Window(const int width, const int height, const std::string &title, const int framerateLimit, sf::Font font) {
     this->width = width;
     this->height = height;
@@ -56,15 +59,16 @@ void Window::setNodeColor(int nodeId, sf::Color color) {
 }
 
 
-void Window::edgeHandler(int srcId, int dstId, bool bidirectional) {
+void Window::edgeHandler(int srcId, int dstId, bool bidirectional, sf::Color color) {
     if (this->graph.checkIfEdgeExists(srcId, dstId) || this->graph.checkIfEdgeExists(dstId, srcId)) {
         this->graph.removeEdge(srcId, dstId);
     } else {
-        this->graph.addEdge(srcId, dstId, bidirectional);
+        this->graph.addEdge(srcId, dstId, bidirectional, color);
     }
 }
 
 void Window::generateRandomGraphBidirectional(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted) {
+    srand(time(nullptr));
     this->graph = Graph();
     for (int i = 0; i < nodes; i++) {
         int randX = rand() % (int(this->width * 0.8 - 2 * padding)) + padding;
@@ -88,7 +92,7 @@ void Window::generateRandomGraphBidirectional(int nodes, int edges, int nodeRadi
             randSrc = rand() % nodes;
             randDst = rand() % nodes;
         }
-        this->graph.addEdge(randSrc, randDst, true);
+        this->graph.addEdge(randSrc, randDst, true, sf::Color::White);
     }
 }
 
@@ -130,14 +134,14 @@ void Window::drawGraph() {
 
     for (const auto& edge: this->graph.getEdges()) {
         sf::VertexArray line(sf::PrimitiveType::Lines, 2);
-        Node src = this->graph.getNodeMap().at(edge.getSrc());
-        Node dst = this->graph.getNodeMap().at(edge.getDst());
+        Node src = this->graph.getNodeMap().at(edge->getSrc());
+        Node dst = this->graph.getNodeMap().at(edge->getDst());
 
         line[0].position = sf::Vector2f(src.getX(), src.getY());
         line[1].position = sf::Vector2f(dst.getX(), dst.getY());
 
-        line[0].color = sf::Color::White;
-        line[1].color = sf::Color::White;
+        line[0].color = edge->getColor();
+        line[1].color = edge->getColor();
 
         this->window.draw(line);
     }
@@ -145,7 +149,97 @@ void Window::drawGraph() {
 
 
 void Window::update() {
+    for (auto &button: this->buttons) {
+        this->drawButton(button);
+    }
     this->drawGraph();
 }
+
+bool Window::BFS(int start, int end, int speed, bool testing) {
+    std::queue<int> nodeQueue;
+    std::set<int> visited;
+
+    nodeQueue.push(start);
+    while (!nodeQueue.empty()) {
+        auto node = nodeQueue.front();
+        nodeQueue.pop();
+        if (visited.find(node) != visited.end()) {
+            continue;
+        }
+        if (node == end) {
+            return true;
+        }
+        visited.insert(node);
+        if (node != start && node != end) {
+            this->setNodeColor(node, sf::Color::Green);
+        }
+        std::vector<int> neighbors = this->graph.getAdjMap().at(node);
+        for (int i = 0; i < neighbors.size(); i++) {
+            for (auto &edge: this->graph.getEdges()) {
+                if ((edge->getSrc() == node && edge->getDst() == neighbors[i]) ||
+                    (edge->getSrc() == neighbors[i] && edge->getDst() == node)) {
+                    edge->setColor(sf::Color::Red);
+                }
+            }
+            if (this->graph.getNodeMap().at(neighbors[i]).getPrev() == -1 && neighbors[i] != start) {
+                this->graph.getNodeMap().at(neighbors[i]).setPrev(node);
+            }
+            nodeQueue.push(neighbors[i]);
+            if (neighbors[i] != start && neighbors[i] != end) {
+                this->setNodeColor(neighbors[i], sf::Color { 199, 119, 0 });
+            }
+        }
+        if (testing) {
+            continue;
+        }
+        this->window.clear();
+        this->update();
+        this->getWindow().display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / speed));
+    }
+
+    return false;
+
+}
+
+void Window::resetGraph() {
+    for (auto &pair: this->graph.getNodeMap()) {
+        pair.second.setColor(sf::Color::Red);
+        pair.second.setPrev(-1);
+    }
+    for (auto &edge: this->graph.getEdges()) {
+        edge->setColor(sf::Color::White);
+    }
+}
+
+void Window::clearGraph() {
+    this->graph = Graph();
+}
+
+void Window::redOutGraph() {
+    for (auto &pair: this->graph.getNodeMap()) {
+        pair.second.setColor(sf::Color::Red);
+    }
+    for (auto &edge: this->graph.getEdges()) {
+        edge->setColor(sf::Color::Red);
+    }
+}
+
+void Window::drawPath(int startId, int endId) {
+    int nodeId = endId;
+    while (this->graph.getNodeMap().at(nodeId).getPrev() != -1) {
+        this->graph.getNodeMap().at(nodeId).setColor(sf::Color::Green);
+        for (auto &edge: this->graph.getEdges()) {
+            if ((edge->getSrc() == nodeId && edge->getDst() == this->graph.getNodeMap().at(nodeId).getPrev()) ||
+                (edge->getSrc() == this->graph.getNodeMap().at(nodeId).getPrev() && edge->getDst() == nodeId)) {
+                edge->setColor(sf::Color::Green);
+            }
+        }
+        nodeId = this->graph.getNodeMap().at(nodeId).getPrev();
+    }
+    this->graph.getNodeMap().at(startId).setColor(sf::Color { 255, 105, 180 });
+    this->graph.getNodeMap().at(endId).setColor(sf::Color { 255, 105, 180 });
+}
+
 
 

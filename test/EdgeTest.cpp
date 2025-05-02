@@ -4,8 +4,8 @@
 
 TEST(Edge_Tests, Edge_Creation_Tests) {
 
-    Edge unidirectional_edge = Edge(0, 1, false);
-    Edge bidirectional_edge = Edge(2, 3, 4, true);
+    Edge unidirectional_edge = Edge(0, 1, false, sf::Color::White);
+    Edge bidirectional_edge = Edge(2, 3, 4, true, sf::Color::White);
 
     ASSERT_EQ(unidirectional_edge.getSrc(), 0);
     ASSERT_EQ(unidirectional_edge.getDst(), 1);
@@ -31,20 +31,20 @@ TEST(Edge_Tests, Edge_Creation_Tests) {
 
 TEST(Edge_Tests, Edge_Equality_Tests) {
 
-    Edge edge1 = Edge(0, 1, false);
-    Edge edge2 = Edge(0, 1 , false);
+    Edge edge1 = Edge(0, 1, false, sf::Color::White);
+    Edge edge2 = Edge(0, 1 , false,sf::Color::White);
 
     ASSERT_TRUE(edge1 == edge2);
 
-    Edge edge3 = Edge(2, 3, false);
+    Edge edge3 = Edge(2, 3, false, sf::Color::White);
 
     ASSERT_FALSE(edge1 == edge3);
 
-    Edge edge4 = Edge(0, 1, 2, false);
+    Edge edge4 = Edge(0, 1, 2, false,sf::Color::White);
 
     ASSERT_FALSE(edge1 == edge4);
 
-    Edge edge5 = Edge(0, 1, true);
+    Edge edge5 = Edge(0, 1, true, sf::Color::White);
 
     ASSERT_FALSE(edge1 == edge5);
 }

@@ -9,6 +9,7 @@ Node::Node(int id, int x, int y, int radius, int padding, float value, sf::Color
     this->padding = padding;
     this->value = value;
     this->color = color;
+    this->prev = -1;
 }
 
 bool Node::operator==(const Node &other) const {
@@ -56,6 +57,10 @@ sf::Color Node::getColor() const {
     return this->color;
 }
 
+int Node::getPrev() const {
+    return this->prev;
+}
+
 bool Node::withinBounds(int x, int y) const {
     return ((x >= this->x - this->radius - padding) &&
             (y >= this->y - this->radius - padding) &&
@@ -89,6 +94,10 @@ void Node::setValue(float value) {
 
 void Node::setColor(sf::Color color) {
     this->color = color;
+}
+
+void Node::setPrev(int prev) {
+    this->prev = prev;
 }
 
 

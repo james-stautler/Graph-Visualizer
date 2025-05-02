@@ -1,18 +1,20 @@
 
 #include "Edge.h"
 
-Edge::Edge(int srcId, int dstId, const bool bidirectional) {
+Edge::Edge(int srcId, int dstId, const bool bidirectional, sf::Color color) {
     this->srcId = srcId;
     this->dstId = dstId;
     this->weight = 1;
     this->bidirectional = bidirectional;
+    this->color = color;
 }
 
-Edge::Edge(int srcId, int dstId, const float weight, const bool bidirectional) {
+Edge::Edge(int srcId, int dstId, const float weight, const bool bidirectional, sf::Color color) {
     this->srcId = srcId;
     this->dstId = dstId;
     this->weight = weight;
     this->bidirectional = bidirectional;
+    this->color = color;
 }
 
 bool Edge::operator==(const Edge& other) const {
@@ -38,6 +40,10 @@ bool Edge::isBidirectional() const {
     return this->bidirectional;
 }
 
+sf::Color Edge::getColor() const {
+    return this->color;
+}
+
 void Edge::setSource(int srcId) {
     this->srcId = srcId;
 }
@@ -52,6 +58,10 @@ void Edge::setWeight(float weight) {
 
 void Edge::setBidirectional(bool bidirectional) {
     this->bidirectional = bidirectional;
+}
+
+void Edge::setColor(sf::Color color) {
+    this->color = color;
 }
 
 
