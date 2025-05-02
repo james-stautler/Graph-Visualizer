@@ -77,10 +77,10 @@ void Window::generateRandomGraph(int nodes, int edges, int nodeRadius, int paddi
     this->graph = Graph();
     for (int i = 0; i < nodes; i++) {
         int randX = rand() % (int(this->width * 0.8 - 2 * padding)) + padding;
-        int randY = rand() % (this->height - 2 * padding) + padding;
+        int randY = rand() % (int(this->height * 0.9 - 2 * padding)) + padding;
         while (this->graph.checkWithinNodeBoundary(randX, randY) != -1) {
             randX = rand() % (int(this->width * 0.8));
-            randY = rand() % (this->height);
+            randY = rand() % (int(this->height * 0.9));
         }
         float weight = 1;
         if (weighted) {
@@ -126,6 +126,9 @@ void Window::drawButton(Button& button) {
     this->window.draw(text);
 }
 
+void Window::addText(std::reference_wrapper<sf::Text> text) {
+    this->texts.push_back(text);
+}
 
 void Window::drawGraph() {
     for (const auto& pair: this->graph.getNodeMap()) {
@@ -170,6 +173,9 @@ void Window::update() {
     this->window.clear();
     for (auto &button: this->buttons) {
         this->drawButton(button);
+    }
+    for (auto &text: this->texts) {
+        this->window.draw(text);
     }
     this->drawGraph();
 }

@@ -25,24 +25,27 @@ void resetStartEndIds(int& start, int& end) {
 int main(int argc, char *argv[])
 {
     constexpr int WIDTH = 1920;
-    constexpr int GRAPH_AREA_LIMIT_X = WIDTH * 0.8;
     constexpr int HEIGHT = 1080;
+    constexpr int GRAPH_AREA_LIMIT_X = WIDTH * 0.8;
+    constexpr int GRAPH_AREA_LIMIT_Y = HEIGHT * 0.9;
     constexpr int FRAMERATE_LIMIT = 60;
 
     constexpr int NODE_RADIUS = 15;
     constexpr int NODE_PADDING = 30;
-    constexpr int CREATION_BUTTON_BASE_X = 1650;
+    constexpr int CREATION_BUTTON_BASE_X = 1600;
     constexpr int CREATION_BUTTON_BASE_Y = 100;
-    constexpr int SELECT_NODE_BUTTON_BASE_X = 1650;
-    constexpr int SELECT_NODE_BUTTON_BASE_Y = 480;
-    constexpr int ALGORITHM_BUTTON_BASE_X = 1650;
-    constexpr int ALGORITHM_BUTTON_BASE_Y = 665;
+    constexpr int SELECT_NODE_BUTTON_BASE_X = 1600;
+    constexpr int SELECT_NODE_BUTTON_BASE_Y = 415;
+    constexpr int ALGORITHM_BUTTON_BASE_X = 1600;
+    constexpr int ALGORITHM_BUTTON_BASE_Y = 600;
+    constexpr int QUIT_BUTTON_BASE_X = 1600;
+    constexpr int QUIT_BUTTON_BASE_Y = 800;
     constexpr int BUTTON_HEIGHT = 50;
     constexpr int BUTTON_WIDTH = 250;
 
-    int RANDOM_NODES = 25;
-    int RANDOM_EDGES = 35;
-    constexpr int ALGORITHM_SPEED = 4;
+    int RANDOM_NODES = 20;
+    int RANDOM_EDGES = 30;
+    constexpr int ALGORITHM_SPEED = 1;
 
     const std::string TITLE = "Graph Visualizer";
     const sf::Font font("../assets/swansea.ttf");
@@ -60,21 +63,45 @@ int main(int argc, char *argv[])
     Button nodeDeletionButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Delete Node");
     Button randomGraphButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 2), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Random Graph");
     Button clearGraphButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 3), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Clear Graph");
-    Button hideEdgesButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 4), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Hide Edges");
     Button selectStartNodeButton = Button(SELECT_NODE_BUTTON_BASE_X, SELECT_NODE_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Choose Start Node");
     Button selectEndNodeButton = Button(SELECT_NODE_BUTTON_BASE_X, SELECT_NODE_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Choose End Node");
     Button bfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "BFS");
     Button dfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "DFS");
+    Button quitButton = Button(QUIT_BUTTON_BASE_X, QUIT_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Quit");
 
     win.addButton(std::reference_wrapper<Button>(nodeCreationButton));
     win.addButton(std::reference_wrapper<Button>(nodeDeletionButton));
     win.addButton(std::reference_wrapper<Button>(randomGraphButton));
     win.addButton(std::reference_wrapper<Button>(clearGraphButton));
-    win.addButton(std::reference_wrapper<Button>(hideEdgesButton));
     win.addButton(std::reference_wrapper<Button>(selectStartNodeButton));
     win.addButton(std::reference_wrapper<Button>(selectEndNodeButton));
     win.addButton(std::reference_wrapper<Button>(bfsButton));
     win.addButton(std::reference_wrapper<Button>(dfsButton));
+    win.addButton(std::reference_wrapper<Button>(quitButton));
+
+    const std::string EDGE_MODIFICATION_STRING = "* Use the create node function and select two nodes to create or delete the edge between them.";
+    sf::Text edgeModificationText = sf::Text(font, EDGE_MODIFICATION_STRING);
+    edgeModificationText.setCharacterSize(15);
+    edgeModificationText.setFillColor(WHITE);
+    sf::Vector2f edgeModificationTextPosition = sf::Vector2f(150, 960);
+    edgeModificationText.setPosition(edgeModificationTextPosition);
+    win.addText(std::reference_wrapper<sf::Text>(edgeModificationText));
+
+    const std::string NODE_COLOR_STRING = "* During traversal orange nodes indicate frontier nodes (those on queue/stack), green indicates fully explored nodes, pink indicates start/goal nodes, and red indicates unexplored nodes.";
+    sf::Text nodeColorText = sf::Text(font, NODE_COLOR_STRING);
+    nodeColorText.setCharacterSize(15);
+    nodeColorText.setFillColor(WHITE);
+    sf::Vector2f nodeColorTextPosition = sf::Vector2f(150, 985);
+    nodeColorText.setPosition(nodeColorTextPosition);
+    win.addText(std::reference_wrapper<sf::Text>(nodeColorText));
+
+    const std::string RANDOM_GRAPH_TEXT = "* You can modify the number of random nodes and edges by changing RANDOM_NODES and RANDOM_EDGES in the source code. Can also adjust animation speed with ALGORITHM_SPEED variable.";
+    sf::Text randomGraphText = sf::Text(font, RANDOM_GRAPH_TEXT);
+    randomGraphText.setCharacterSize(15);
+    randomGraphText.setFillColor(WHITE);
+    sf::Vector2f randomGraphTextPosition = sf::Vector2f(150, 1010);
+    randomGraphText.setPosition(randomGraphTextPosition);
+    win.addText(std::reference_wrapper<sf::Text>(randomGraphText));
 
     int selectedId_1 = -1; // Selected src node
     int selectedId_2 = -1; // Selected dst node
@@ -95,7 +122,7 @@ int main(int argc, char *argv[])
 
             if (event->is<sf::Event::MouseButtonPressed>()) {
                 sf::Vector2i pos = sf::Mouse::getPosition(win.getWindow());
-                if (pos.x <= GRAPH_AREA_LIMIT_X) {
+                if (pos.x <= GRAPH_AREA_LIMIT_X && pos.y <= GRAPH_AREA_LIMIT_Y) {
                     int nodeId = win.getGraph().checkWithinNodeBoundary(pos.x, pos.y);
                     if (graphCreationState == CREATE) {
                         if (nodeId != -1) {
@@ -223,13 +250,15 @@ int main(int argc, char *argv[])
                             reset = true;
                             dfsButton.flipActiveState();
                         }
+                    } else if (quitButton.isWithinBounds(pos.x, pos.y)) {
+                        win.getWindow().close();
                     }
                 }
             }
         }
 
         if (reset) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(5000));
             win.resetGraph(true);
             resetSelectedIds(selectedId_1, selectedId_2);
             resetStartEndIds(startId, endId);

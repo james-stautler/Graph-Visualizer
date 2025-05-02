@@ -18,6 +18,7 @@ private:
     sf::RenderWindow window;
     sf::Font font;
     std::vector<std::reference_wrapper<Button>> buttons;
+    std::vector<std::reference_wrapper<sf::Text>> texts;
     Graph graph;
 
 public:
@@ -36,6 +37,7 @@ public:
     void edgeHandler(int srcId, int dstId, bool bidirectional, sf::Color color);
     void generateRandomGraph(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted);
     void drawButton(Button& button);
+    void addText(std::reference_wrapper<sf::Text> text);
     void drawGraph();
     void update();
 
