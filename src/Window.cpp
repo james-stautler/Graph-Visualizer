@@ -72,7 +72,7 @@ void Window::edgeHandler(int srcId, int dstId, bool bidirectional, sf::Color col
     }
 }
 
-void Window::generateRandomGraphBidirectional(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted) {
+void Window::generateRandomGraph(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted) {
     srand(time(nullptr));
     this->graph = Graph();
     for (int i = 0; i < nodes; i++) {
@@ -138,6 +138,11 @@ void Window::drawGraph() {
     }
 
     for (const auto& edge: this->graph.getEdges()) {
+        sf::Text text = sf::Text(this->font);
+        text.setCharacterSize(10);
+        text.setString(std::to_string(edge->getWeight()).substr(0, std::to_string(edge->getWeight()).find(".") + 2 + 1));
+        text.setFillColor(sf::Color::Blue);
+
         sf::VertexArray line(sf::PrimitiveType::Lines, 2);
         Node src = this->graph.getNodeMap().at(edge->getSrc());
         Node dst = this->graph.getNodeMap().at(edge->getDst());
@@ -148,7 +153,15 @@ void Window::drawGraph() {
         line[0].color = edge->getColor();
         line[1].color = edge->getColor();
 
+        sf::Vector2f textPosition = sf::Vector2f((src.getX() + dst.getX()) / 2, (src.getY() + dst.getY()) / 2);
+        text.setPosition(textPosition);
+
         this->window.draw(line);
+
+        if (edge->getWeight() != 1) {
+            this->window.draw(text);
+        }
+
     }
 }
 
@@ -253,7 +266,9 @@ bool Window::BFS(int start, int end, int speed, bool testing) {
 bool Window::DFS(int curr, int start, int end, int speed, std::set<int>& visited, bool testing) {
 
     if (!testing) {
-        this->setNodeColor(curr, sf::Color { 199, 119, 0 });
+        if (curr != start && curr != end) {
+            this->setNodeColor(curr, sf::Color { 199, 119, 0 });
+        }
         this->window.clear();
         this->update();
         this->getWindow().display();

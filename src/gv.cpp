@@ -12,9 +12,20 @@ enum GRAPH_CREATION_STATE {
     NONE
 };
 
-int main()
+void resetSelectedIds(int& selected_1, int& selected_2) {
+    selected_1 = -1;
+    selected_2 = -1;
+};
+
+void resetStartEndIds(int& start, int& end) {
+    start = -1;
+    end = -1;
+}
+
+int main(int argc, char *argv[])
 {
     constexpr int WIDTH = 1920;
+    constexpr int GRAPH_AREA_LIMIT_X = WIDTH * 0.8;
     constexpr int HEIGHT = 1080;
     constexpr int FRAMERATE_LIMIT = 60;
 
@@ -23,15 +34,15 @@ int main()
     constexpr int CREATION_BUTTON_BASE_X = 1650;
     constexpr int CREATION_BUTTON_BASE_Y = 100;
     constexpr int SELECT_NODE_BUTTON_BASE_X = 1650;
-    constexpr int SELECT_NODE_BUTTON_BASE_Y = 415;
+    constexpr int SELECT_NODE_BUTTON_BASE_Y = 480;
     constexpr int ALGORITHM_BUTTON_BASE_X = 1650;
-    constexpr int ALGORITHM_BUTTON_BASE_Y = 600;
+    constexpr int ALGORITHM_BUTTON_BASE_Y = 665;
     constexpr int BUTTON_HEIGHT = 50;
-    constexpr int BUTTON_WIDTH = 200;
+    constexpr int BUTTON_WIDTH = 250;
 
-    constexpr int RANDOM_NODES = 25;
-    constexpr int RANDOM_EDGES = 35;
-    constexpr int ALGORITHM_SPEED = 5;
+    int RANDOM_NODES = 25;
+    int RANDOM_EDGES = 35;
+    constexpr int ALGORITHM_SPEED = 4;
 
     const std::string TITLE = "Graph Visualizer";
     const sf::Font font("../assets/swansea.ttf");
@@ -49,29 +60,27 @@ int main()
     Button nodeDeletionButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Delete Node");
     Button randomGraphButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 2), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Random Graph");
     Button clearGraphButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 3), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Clear Graph");
+    Button hideEdgesButton = Button(CREATION_BUTTON_BASE_X, CREATION_BUTTON_BASE_Y + (65 * 4), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Hide Edges");
     Button selectStartNodeButton = Button(SELECT_NODE_BUTTON_BASE_X, SELECT_NODE_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Choose Start Node");
     Button selectEndNodeButton = Button(SELECT_NODE_BUTTON_BASE_X, SELECT_NODE_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Choose End Node");
     Button bfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y, BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "BFS");
     Button dfsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 1), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "DFS");
-    Button kruskalButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 2), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Kruskal's MST");
-    Button primsButton = Button(ALGORITHM_BUTTON_BASE_X, ALGORITHM_BUTTON_BASE_Y + (65 * 3), BUTTON_WIDTH, BUTTON_HEIGHT, false, DARK_GRAY, LIGHT_GRAY, "Prim's MST");
 
     win.addButton(std::reference_wrapper<Button>(nodeCreationButton));
     win.addButton(std::reference_wrapper<Button>(nodeDeletionButton));
     win.addButton(std::reference_wrapper<Button>(randomGraphButton));
     win.addButton(std::reference_wrapper<Button>(clearGraphButton));
+    win.addButton(std::reference_wrapper<Button>(hideEdgesButton));
     win.addButton(std::reference_wrapper<Button>(selectStartNodeButton));
     win.addButton(std::reference_wrapper<Button>(selectEndNodeButton));
     win.addButton(std::reference_wrapper<Button>(bfsButton));
     win.addButton(std::reference_wrapper<Button>(dfsButton));
-    win.addButton(std::reference_wrapper<Button>(kruskalButton));
-    win.addButton(std::reference_wrapper<Button>(primsButton));
 
     int selectedId_1 = -1; // Selected src node
     int selectedId_2 = -1; // Selected dst node
 
-    int startId = -1;
-    int endId = -1;
+    int startId = -1; // Graph algorithm start node
+    int endId = -1; // Graph algorithm target node
 
     GRAPH_CREATION_STATE graphCreationState = CREATE;
 
@@ -86,22 +95,16 @@ int main()
 
             if (event->is<sf::Event::MouseButtonPressed>()) {
                 sf::Vector2i pos = sf::Mouse::getPosition(win.getWindow());
-                // Graph creation/select block
-                if (pos.x <= WIDTH * 0.8) {
+                if (pos.x <= GRAPH_AREA_LIMIT_X) {
                     int nodeId = win.getGraph().checkWithinNodeBoundary(pos.x, pos.y);
                     if (graphCreationState == CREATE) {
                         if (nodeId != -1) {
-                            // Select Nodes
                             if (win.getGraph().getNodeMap().at(nodeId).strictlyWithinBounds(pos.x, pos.y)) {
                                 sf::Color nodeColor = win.getNodeColor(nodeId);
-                                if (nodeColor == RED) {
-                                    win.setNodeColor(nodeId, BLUE);
-                                    if (selectedId_1 == -1) {
-                                        selectedId_1 = nodeId;
-                                    } else if (selectedId_2 == -1) {
-                                        selectedId_2 = nodeId;
+                                if (nodeColor == RED || nodeColor == PINK) {
+                                    if (nodeColor == RED) {
+                                        win.setNodeColor(nodeId, BLUE);
                                     }
-                                } else if (nodeColor == PINK) {
                                     if (selectedId_1 == -1) {
                                         selectedId_1 = nodeId;
                                     } else if (selectedId_2 == -1) {
@@ -126,8 +129,7 @@ int main()
                                 if (win.getNodeColor(selectedId_2) != PINK) {
                                     win.setNodeColor(selectedId_2, RED);
                                 }
-                                selectedId_1 = -1;
-                                selectedId_2 = -1;
+                                resetSelectedIds(selectedId_1, selectedId_2);
                             }
 
                         } else {
@@ -170,20 +172,16 @@ int main()
                         graphCreationState = RANDOM;
                         win.setAllButtonsInactive();
                         randomGraphButton.flipActiveState();
-                        win.generateRandomGraphBidirectional(RANDOM_NODES, RANDOM_EDGES, NODE_RADIUS, NODE_PADDING, RED, false);
-                        selectedId_1 = -1;
-                        selectedId_2 = -1;
-                        startId = -1;
-                        endId = -1;
+                        win.generateRandomGraph(RANDOM_NODES, RANDOM_EDGES, NODE_RADIUS, NODE_PADDING, RED, false);
+                        resetSelectedIds(selectedId_1, selectedId_2);
+                        resetStartEndIds(startId, endId);
                     } else if (clearGraphButton.isWithinBounds(pos.x, pos.y)) {
                         graphCreationState = CLEARED;
                         win.clearGraph();
                         win.setAllButtonsInactive();
                         clearGraphButton.flipActiveState();
-                        selectedId_1 = -1;
-                        selectedId_2 = -1;
-                        startId = -1;
-                        endId = -1;
+                        resetSelectedIds(selectedId_1, selectedId_2);
+                        resetStartEndIds(startId, endId);
                     } else if (selectStartNodeButton.isWithinBounds(pos.x, pos.y)) {
                         graphCreationState = SELECT_START;
                         win.setAllButtonsInactive();
@@ -193,45 +191,38 @@ int main()
                         win.setAllButtonsInactive();
                         selectEndNodeButton.flipActiveState();
                     } else if (bfsButton.isWithinBounds(pos.x, pos.y)) {
-                        graphCreationState = NONE;
-                        win.setAllButtonsInactive();
-                        bfsButton.flipActiveState();
                         if (startId != -1 && endId != -1) {
+                            graphCreationState = NONE;
+                            win.setAllButtonsInactive();
+                            bfsButton.flipActiveState();
                             if (win.BFS(startId, endId, ALGORITHM_SPEED, false)) {
                                 win.resetGraph(false);
                                 win.drawPath(startId, endId);
-                                win.update();
-                                win.getWindow().display();
                             } else {
                                 win.redOutGraph();
-                                win.update();
-                                win.getWindow().display();
                             };
+                            win.update();
+                            win.getWindow().display();
                             reset = true;
+                            bfsButton.flipActiveState();
                         }
-                        bfsButton.flipActiveState();
                     } else if (dfsButton.isWithinBounds(pos.x, pos.y)) {
-                        graphCreationState = NONE;
-                        win.setAllButtonsInactive();
-                        dfsButton.flipActiveState();
                         if (startId != -1 && endId != -1) {
+                            graphCreationState = NONE;
+                            win.setAllButtonsInactive();
+                            dfsButton.flipActiveState();
                             std::set<int> visited;
                             if (win.DFS(startId, startId, endId, ALGORITHM_SPEED, visited, false)) {
                                 win.resetGraph(false);
                                 win.drawPath(startId, endId);
-                                win.update();
-                                win.getWindow().display();
                             } else {
                                 win.redOutGraph();
-                                win.update();
-                                win.getWindow().display();
                             }
+                            win.update();
+                            win.getWindow().display();
                             reset = true;
+                            dfsButton.flipActiveState();
                         }
-                    } else if (kruskalButton.isWithinBounds(pos.x, pos.y)) {
-                        // TODO: KRUSKAL'S ALGORITHM
-                    } else if (primsButton.isWithinBounds(pos.x, pos.y)) {
-                        // TODO: PRIM'S ALGORITHM
                     }
                 }
             }
@@ -240,6 +231,8 @@ int main()
         if (reset) {
             std::this_thread::sleep_for(std::chrono::milliseconds(4000));
             win.resetGraph(true);
+            resetSelectedIds(selectedId_1, selectedId_2);
+            resetStartEndIds(startId, endId);
         }
         win.update();
         win.getWindow().display();

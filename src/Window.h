@@ -34,7 +34,7 @@ public:
     void setAllButtonsInactive();
     void setNodeColor(int nodeId, sf::Color color);
     void edgeHandler(int srcId, int dstId, bool bidirectional, sf::Color color);
-    void generateRandomGraphBidirectional(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted);
+    void generateRandomGraph(int nodes, int edges, int nodeRadius, int padding, sf::Color nodeColor, bool weighted);
     void drawButton(Button& button);
     void drawGraph();
     void update();
