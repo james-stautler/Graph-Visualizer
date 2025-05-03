@@ -7,6 +7,7 @@
 #include <memory>
 #include <set>
 #include <queue>
+#include <algorithm>
 #include <map>
 
 class Graph {
