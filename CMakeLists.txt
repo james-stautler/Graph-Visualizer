@@ -52,20 +52,3 @@ target_link_libraries(Tests PRIVATE GTest::gtest_main)
 target_link_libraries(Tests PRIVATE GTest::gmock_main)
 
 gtest_discover_tests(Tests)
-
-function(copy_runtime_dependencies target_name)
-    if(WIN32)
-        set(DLL_COPY_EXPRESSION "$<TARGET_RUNTIME_DLLS:${target_name}>")
-
-        add_custom_command(TARGET ${target_name} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${DLL_COPY_EXPRESSION}
-                $<TARGET_FILE_DIR:${target_name}>
-                COMMENT "Copying runtime dependencies for ${target_name}"
-                VERBATIM
-        )
-    endif()
-endfunction()
-
-copy_runtime_dependencies(gv)
-copy_runtime_dependencies(Tests)
