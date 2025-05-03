@@ -10,7 +10,7 @@ Must have cmake installed on your local device. Clone the repository and enter t
 `cmake --build .`\
 `./bin/Debug/gv`
 
-## Runing Tests
+## Running Tests
 Unit tests have been created and can be found in the same directory as the project exectuable. After building, can simply run tests with:\
 \
 `ctest`
