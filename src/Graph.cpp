@@ -8,6 +8,19 @@ Graph::Graph() {
     this->adjMap = std::map<int, std::vector<int>>();
 }
 
+void Graph::resetGraph(bool hardReset) {
+    for (auto &pair: this->nodeMap) {
+        pair.second.setColor(sf::Color::Red);
+        if (hardReset) {
+            pair.second.setPrev(-1);
+        }
+    }
+    for (auto &edge: this->edges) {
+        edge->setColor(sf::Color::White);
+    }
+}
+
+
 std::map<int, Node>& Graph::getNodeMap() {
     return this->nodeMap;
 }
@@ -167,5 +180,79 @@ bool Graph::removeEdge(int srcId, int dstId) {
     }
 
     return edgeRemoved && mapEntryRemoved;
+}
+
+bool Graph::TestBFS(int start, int end) {
+    std::queue<int> nodeQueue;
+    std::set<int> visited;
+
+    nodeQueue.push(start);
+    while (!nodeQueue.empty()) {
+        auto node = nodeQueue.front();
+        nodeQueue.pop();
+        if (visited.find(node) != visited.end()) {
+            continue;
+        }
+        if (node == end) {
+            return true;
+        }
+        visited.insert(node);
+        if (node != start && node != end) {
+            this->nodeMap.at(node).setColor(sf::Color::Green);
+        }
+        std::vector<int> neighbors = this->adjMap.at(node);
+        for (int i = 0; i < neighbors.size(); i++) {
+            for (auto &edge: this->edges) {
+                if ((edge->getSrc() == node && edge->getDst() == neighbors[i]) ||
+                    (edge->getSrc() == neighbors[i] && edge->getDst() == node)) {
+                    edge->setColor(sf::Color::Red);
+                    }
+            }
+            if (this->nodeMap.at(neighbors[i]).getPrev() == -1 && neighbors[i] != start) {
+                this->nodeMap.at(neighbors[i]).setPrev(node);
+            }
+            nodeQueue.push(neighbors[i]);
+            if (neighbors[i] != start && neighbors[i] != end) {
+                this->nodeMap.at(neighbors[i]).setColor(sf::Color { 199, 119, 0 });
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Graph::TestDFS(int curr, int start, int end, std::set<int>& visited) {
+
+    bool res = false;
+    if (curr == end) {
+        return true;
+    }
+
+    if (visited.find(curr) != visited.end()) {
+        return false;
+    }
+    visited.insert(curr);
+
+    std::vector<int> neighbors = this->adjMap.at(curr);
+    for (int i = 0; i < neighbors.size(); i++) {
+        for (auto &edge: this->edges) {
+            if ((edge->getSrc() == curr && edge->getDst() == neighbors[i]) ||
+                (edge->getSrc() == neighbors[i] && edge->getDst() == curr)) {
+                edge->setColor(sf::Color::Red);
+                }
+        }
+        if (this->nodeMap.at(neighbors[i]).getPrev() == -1 && neighbors[i] != start) {
+            this->nodeMap.at(neighbors[i]).setPrev(curr);
+        }
+        res |= this->TestDFS(neighbors[i], start, end, visited);
+        if (res) {
+            break;
+        }
+        if (neighbors[i] != start && neighbors[i] != end) {
+            this->nodeMap.at(neighbors[i]).setColor(sf::Color { 199, 119, 0 });
+        }
+    }
+    this->nodeMap.at(curr).setColor(sf::Color::Green);
+    return res;
 }
 

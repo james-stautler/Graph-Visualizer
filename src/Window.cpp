@@ -181,15 +181,7 @@ void Window::update() {
 }
 
 void Window::resetGraph(bool hardReset) {
-    for (auto &pair: this->graph.getNodeMap()) {
-        pair.second.setColor(sf::Color::Red);
-        if (hardReset) {
-            pair.second.setPrev(-1);
-        }
-    }
-    for (auto &edge: this->graph.getEdges()) {
-        edge->setColor(sf::Color::White);
-    }
+    this->graph.resetGraph(hardReset);
 }
 
 void Window::clearGraph() {
