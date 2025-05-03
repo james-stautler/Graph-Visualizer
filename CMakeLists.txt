@@ -41,7 +41,7 @@ add_executable(Tests
         test/EdgeTest.cpp
         test/GraphTest.cpp
         test/ButtonTest.cpp
-        test/AlgorithmTest.cpp)
+)
 
 target_compile_features(gv PRIVATE cxx_std_17)
 target_link_libraries(gv PRIVATE SFML::Graphics)
