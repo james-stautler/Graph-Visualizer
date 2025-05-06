@@ -6,14 +6,14 @@ A simple C++ based project implemented with the SFML libray to visualize BFS and
 ## Running the Project
 Must have cmake installed on your local device. Clone the repository and enter the following commands to run the project:\
 \
-`cd build`\
-`cmake --build .`\
-`./bin/Debug/gv`
+`cmake -S . -B build`\
+`cmake --build build`\
+`./build/bin/Debug/gv`
 
 ## Running Tests
 Unit tests have been created and can be found in the same directory as the project exectuable. After building, can simply run tests with:\
 \
-`ctest`
+`./build/ctest`
 
 ## Functionality
 Users are able to create nodes by selecting the "Create Node" option and clicking on the canvas, though nodes can not be physically touching (this is done to ensure all edges remain visible). To create an unweighted edge between two nodes, click on two nodes while the "Create Node" option is selected; the same functionality applies to removing edges. If there is an edge present between two nodes when those nodes are selected, the edge is removed.\
